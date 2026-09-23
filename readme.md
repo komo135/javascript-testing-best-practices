@@ -1,131 +1,156 @@
-<img src="/assets/jtbp-header-blue.png" width="1920px"/>
+# JavaScriptテストのベストプラクティス — 日本語版
+
+[英語原文](readme-en.md) · [翻訳元のリポジトリ](https://github.com/goldbergyoni/javascript-testing-best-practices)
+
+Yoni Goldbergらによるガイドの日本語訳です。翻訳元は[コミット `63a2bb0` のREADME](https://github.com/goldbergyoni/javascript-testing-best-practices/blob/63a2bb07bb718d0a34a9c1249ef0df9b1266dad8/readme.md)です。
+
+## 読む前に：そのまま使えない記述
+
+原文の説明やコードを、最新のツールに合わせて書き直したものではありません。特に、次の記述には注意してください。
+
+- **[冒頭の講座案内](#course-announcement)：**「特別価格は残り48時間」は、原文掲載当時の告知です。現在のキャンペーン期限ではありません。
+- **[2.6節のV8メモリ上限](#practice-2-6)：** 原文は「上限1.7GB」としていますが、固定値ではありません。環境や起動オプションで変わります。実際の上限は`v8.getHeapStatistics().heap_size_limit`で確認できます（[Node.js公式資料](https://nodejs.org/api/v8.html#v8getheapstatistics)）。
+- **[5.7節の`npm update`](#practice-5-7)：** 原文の「`npm update`でも更新されない」という説明は、そのままでは正確ではありません。`npm update`は、指定されたバージョン範囲内で依存パッケージを更新します。メジャーバージョンを自動で越えないこととは別の話です（[npm公式資料](https://docs.npmjs.com/cli/v10/commands/npm-update)）。
+- **[5.9節のNode.jsバージョン](#practice-5-9)：** 本文の8・9・10、コード例の4〜7は、すべてサポート終了済みです。実際のCIでは、自分のプロジェクトが対応する、サポート期間内のバージョンを指定してください（[Node.js公式リリース一覧](https://nodejs.org/en/about/previous-releases)）。
+
+コード例（コメント・テスト名を含む）と画像内の英文は原文のままです。著者・協力者の表記と[MITライセンス](LICENSE)も保持しています。
+
+---
+
+<img src="/assets/jtbp-header-blue.png" width="1920px" alt="JavaScript テストのベストプラクティス"/>
 
 
 <br/>
 
-# 👇 Why this guide can take your testing skills to the next level
+# 👇 このガイドでテストのスキルを一段引き上げる
 
 <br/>
 
-## 📗 50+ best practices: Super-comprehensive and exhaustive
+## 📗 50以上のベストプラクティスを徹底的に網羅
 
-This is a guide for JavaScript & Node.js reliability from A-Z. It summarizes and curates for you dozens of the best blog posts, books, and tools the market has to offer
+JavaScript と Node.js の信頼性を高めるための、基礎から応用までを扱うガイドです。数多くの優れたブログ記事、書籍、ツールを厳選し、その要点をまとめています。
 
-## 🚢 Advanced: Goes 10,000 miles beyond the basics
+## 🚢 基礎のはるか先まで踏み込む高度な内容
 
-Hop into a journey that travels way beyond the basics into advanced topics like testing in production, mutation testing, property-based testing, and many other strategic & professional tools. Should you read every word in this guide your testing skills are likely to go way above the average
+基礎を大きく越えて、本番環境でのテスト、ミューテーションテスト、プロパティベーステストなど、高度なトピックや実務で役立つ戦略・ツールを学びましょう。このガイドを隅々まで読めば、テストのスキルを大きく伸ばせるはずです。
 
-## 🌐 Full-stack: front, backend, CI, anything
+## 🌐 フロントエンド、バックエンド、CIまでフルスタックに対応
 
-Start by understanding the ubiquitous testing practices that are the foundation for any application tier. Then, delve into your area of choice: frontend/UI, backend, CI, or maybe all of them?
-
-<br/>
-
-### Written By Yoni Goldberg - A JavaScript & Node.js consultant
-
-### 👨‍🏫 Exciting news: I've just released my super-comprehensive testing course after two years of recording and editing. [Less than 48 hours left for the 🎁 special launch deal](https://testjavascript.com/)
+まずは、アプリケーションのどの層でも基盤となる、共通のテストプラクティスを理解しましょう。その後はフロントエンド・UI、バックエンド、CIのうち、関心のある分野を深掘りしてください。もちろん、すべてを学んでもかまいません。
 
 <br/>
 
-### Translations - read in your own language
+### 著者：Yoni Goldberg — JavaScript・Node.js コンサルタント
 
-- 🇨🇳[Chinese](readme-zh-CN.md) - Courtesy of [Yves yao](https://github.com/yvesyao)
-- 🇰🇷[Korean](readme.kr.md) - Courtesy of [Rain Byun](https://github.com/ragubyun)
-- 🇵🇱[Polish](readme-pl.md) - Courtesy of [Michal Biesiada](https://github.com/mbiesiad)
-- 🇪🇸[Spanish](readme-es.md) - Courtesy of [Miguel G. Sanguino](https://github.com/sanguino)
-- 🇧🇷[Portuguese-BR](readme-pt-br.md) - Courtesy of [Iago Angelim Costa Cavalcante](https://github.com/iagocavalcante) , [Douglas Mariano Valero](https://github.com/DouglasMV) and [koooge](https://github.com/koooge)
-- 🇫🇷[French](readme-fr.md) - Courtesy of [Mathilde El Mouktafi](https://github.com/mel-mouk)
-- 🇯🇵[Japanese (draft)](https://github.com/yuichkun/javascript-testing-best-practices/blob/master/readme-jp.md) - Courtesy of [Yuichi Yogo](https://github.com/yuichkun) and [ryo](https://github.com/kawamataryo)
-- 🇹🇼[Traditional Chinese](readme-zh-TW.md) - Courtesy of [Yubin Hsu](https://github.com/yubinTW)
-- 🇺🇦[Ukrainian](readme-ua.md) - Courtesy of [Serhii Shramko](https://github.com/Shramkoweb)
-- 🇮🇷[Persian](readme-pr-fr.md) - Courtesy of [Ali Azmoodeh](https://github.com/TREER00T)
-- 🇷🇺[Russian](readme-ru.md) - Courtesy of [Alex Popov](https://github.com/Saimon398)
+<a id="course-announcement"></a>
 
-- Want to translate to your own language? please open an issue 💜
+### 👨‍🏫 著者からのお知らせ：2年間の収録と編集を経て、テストを徹底的に学べる講座を公開しました。[🎁 公開記念の特別価格は残り48時間未満です](https://testjavascript.com/)
+
+<br/>
+
+### 各言語の翻訳
+
+- 🇨🇳[中国語（簡体字）](readme-zh-CN.md) — 翻訳：[Yves yao](https://github.com/yvesyao)
+- 🇰🇷[韓国語](readme.kr.md) — 翻訳：[Rain Byun](https://github.com/ragubyun)
+- 🇵🇱[ポーランド語](readme-pl.md) — 翻訳：[Michal Biesiada](https://github.com/mbiesiad)
+- 🇪🇸[スペイン語](readme-es.md) — 翻訳：[Miguel G. Sanguino](https://github.com/sanguino)
+- 🇧🇷[ポルトガル語（ブラジル）](readme-pt-br.md) — 翻訳：[Iago Angelim Costa Cavalcante](https://github.com/iagocavalcante)、[Douglas Mariano Valero](https://github.com/DouglasMV)、[koooge](https://github.com/koooge)
+- 🇫🇷[フランス語](readme-fr.md) — 翻訳：[Mathilde El Mouktafi](https://github.com/mel-mouk)
+- 🇯🇵[上流で紹介されている日本語ドラフト（この翻訳とは別のもの）](https://github.com/yuichkun/javascript-testing-best-practices/blob/master/readme-jp.md) — 翻訳：[Yuichi Yogo](https://github.com/yuichkun)、[ryo](https://github.com/kawamataryo)
+- 🇹🇼[中国語（繁体字）](readme-zh-TW.md) — 翻訳：[Yubin Hsu](https://github.com/yubinTW)
+- 🇺🇦[ウクライナ語](readme-ua.md) — 翻訳：[Serhii Shramko](https://github.com/Shramkoweb)
+- 🇮🇷[ペルシャ語](readme-pr-fr.md) — 翻訳：[Ali Azmoodeh](https://github.com/TREER00T)
+- 🇷🇺[ロシア語](readme-ru.md) — 翻訳：[Alex Popov](https://github.com/Saimon398)
+
+- ご自身の言語への翻訳を希望する方は、上流リポジトリでIssueを作成してください 💜
 
 <br/><br/>
 
-## `Table of Contents`
+## 目次
 
-#### [`Section 0: The Golden Rule`](#section-0️⃣-the-golden-rule)
+#### [第0章：黄金律](#section-0)
 
-A single advice that inspires all the others (1 special bullet)
+ほかのすべての指針の基礎となる、たった1つの助言（1項目）
 
-#### [`Section 1: The Test Anatomy`](#section-1-the-test-anatomy-1)
+#### [第1章：テストの構造](#section-1)
 
-The foundation - structuring clean tests (12 bullets)
+読みやすいテストを組み立てるための基礎（13項目）
 
-#### [`Section 2: Backend`](#section-2️⃣-backend-testing)
+#### [第2章：バックエンド](#section-2)
 
-Writing backend and Microservices tests efficiently (13 bullets)
+バックエンドとマイクロサービスのテストを効率よく書く（12項目）
 
-#### [`Section 3: Frontend`](#section-3️⃣-frontend-testing)
+#### [第3章：フロントエンド](#section-3)
 
-Writing tests for web UI including component and E2E tests (11 bullets)
+コンポーネントテストからE2Eテストまで、Web UIのテストを書く（11項目）
 
-#### [`Section 4: Measuring Tests Effectiveness`](#section-4️⃣-measuring-test-effectiveness)
+#### [第4章：テストの有効性を測る](#section-4)
 
-Watching the watchman - measuring test quality (4 bullets)
+見張り役を見張る — テストそのものの品質を測る（4項目）
 
-#### [`Section 5: Continuous Integration`](#section-5️⃣-ci-and-other-quality-measures)
+#### [第5章：継続的インテグレーション](#section-5)
 
-Guidelines for CI in the JS world (9 bullets)
-
-<br/><br/>
-
-# Section 0️⃣: The Golden Rule
-
-<br/>
-
-## ⚪️ 0 The Golden Rule: Design for lean testing
-
-:white_check_mark: **Do:**
-Testing code is not production-code - Design it to be short, dead-simple, flat, and delightful to work with. One should look at a test and get the intent instantly.
-
-See, our minds are already occupied with our main job - the production code. There is no 'headspace' for additional complexity. Should we try to squeeze yet another sus-system into our poor brain it will slow the team down which works against the reason we do testing. Practically this is where many teams just abandon testing.
-
-The tests are an opportunity for something else - a friendly assistant, co-pilot, that delivers great value for a small investment. Science tells us that we have two brain systems: system 1 is used for effortless activities like driving a car on an empty road and system 2 is meant for complex and conscious operations like solving a math equation. Design your test for system 1, when looking at test code it should _feel_ as easy as modifying an HTML document and not like solving 2X(17 × 24).
-
-This can be achieved by selectively cherry-picking techniques, tools, and test targets that are cost-effective and provide great ROI. Test only as much as needed, and strive to keep it nimble, sometimes it's even worth dropping some tests and trading reliability for agility and simplicity.
-
-![alt text](/assets/headspace.png "We have no head room for additional complexity")
-
-Most of the advice below are derivatives of this principle.
-
-### Ready to start?
+JavaScriptにおけるCIの指針（9項目）
 
 <br/><br/>
 
-# Section 1: The Test Anatomy
+<a id="section-0"></a>
+
+# 第0章：黄金律
 
 <br/>
 
-## ⚪ ️ 1.1 Include 3 parts in each test name
+## ⚪️ 0 黄金律：無駄がなくシンプルなテストを設計する
 
-:white_check_mark: **Do:** A test report should tell whether the current application revision satisfies the requirements for the people who are not necessarily familiar with the code: the tester, the DevOps engineer who is deploying and the future you two years from now. This can be achieved best if the tests speak at the requirements level and include 3 parts:
+:white_check_mark: **推奨：**
+テストコードは本番コードとは違います。短く、きわめてシンプルで、構造が平坦で、扱いやすいものにしましょう。テストを見た瞬間に、その意図を理解できることが大切です。
 
-(1) What is being tested? For example, the ProductsService.addNewProduct method
+私たちの頭は、本来の仕事である本番コードのことで、すでにいっぱいです。これ以上の複雑さを受け入れる余裕はありません。そこに別のサブシステムを詰め込もうとすると、チームの速度が落ち、テストをする本来の目的に逆行します。実際、ここでテストを諦めてしまうチームは少なくありません。
 
-(2) Under what circumstances and scenario? For example, no price is passed to the method
+テストには、別の役割を担える可能性があります。小さな投資で大きな価値をもたらす、親切なアシスタントや副操縦士という役割です。科学では、人間には2つの思考システムがあるとされています。「システム1」は空いた道路で車を運転するような、あまり意識的な努力を必要としない活動に使われます。「システム2」は数学の方程式を解くような、複雑で意識的な作業に使われます。テストはシステム1で扱えるように設計しましょう。テストコードを見るとき、2×(17×24)を計算するような難しさではなく、HTML文書を修正するくらい簡単だと_感じられる_ことが理想です。
 
-(3) What is the expected result? For example, the new product is not approved
+そのためには、費用対効果と投資収益率（ROI）の高い手法、ツール、テスト対象を選び抜きます。必要な分だけテストし、軽快さを保つよう努めましょう。場合によっては、一部のテストを減らし、信頼性と引き換えに機動性やシンプルさを得ることにも価値があります。
+
+![複雑さをこれ以上抱え込む余裕はない](/assets/headspace.png "複雑さをこれ以上抱え込む余裕はない")
+
+以下の助言の大半は、この原則から導かれています。
+
+### それでは始めましょう
+
+<br/><br/>
+
+<a id="section-1"></a>
+
+# 第1章：テストの構造
 
 <br/>
 
-❌ **Otherwise:** A deployment just failed, a test named “Add product” failed. Does this tell you what exactly is malfunctioning?
+## ⚪️ 1.1 テスト名に3つの要素を含める
+
+:white_check_mark: **推奨：** テストレポートは、コードに詳しくない人にも、現在のアプリケーションの変更が要件を満たしているかどうかを伝える必要があります。読むのはテスターやデプロイを担当するDevOpsエンジニア、そして2年後の自分かもしれません。そのためには、テストを要件の言葉で記述し、次の3つの要素を含めるのが効果的です。
+
+(1) 何をテストするのか。例：ProductsService.addNewProductメソッド。
+
+(2) どのような条件・シナリオなのか。例：メソッドに価格が渡されていない場合。
+
+(3) 期待する結果は何か。例：新しい商品は承認されない。
 
 <br/>
 
-**👇 Note:** Each bullet has code examples and sometime also an image illustration. Click to expand
+❌ **守らないと：** デプロイが失敗し、「商品を追加する」というテストが落ちました。これだけで、何が正しく動いていないのか具体的にわかるでしょうか。
+
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+**👇 補足：** 各項目にはコード例があり、図解が付いているものもあります。クリックすると展開できます。
+<br/>
+
+<details><summary>✏ <b>コード例</b></summary>
   
 <br/>
   
-### :clap: Doing It Right Example: A test name that constitutes 3 parts
+### :clap: 良い例：3つの要素を含むテスト名
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Mocha-blue.svg "Using Mocha to illustrate the idea")
+![Mochaを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Mocha-blue.svg "Mochaを使った例")
 
 ```javascript
 //1. unit under test
@@ -143,42 +168,42 @@ describe('Products Service', function() {
 
 <br/>
 
-### :clap: Doing It Right Example: A test name that constitutes 3 parts
+### :clap: 良い例：3つの要素を含むテスト名
 
-![alt text](/assets/bp-1-3-parts.jpeg "A test name that constitutes 3 parts")
+![3つの要素を含むテスト名](/assets/bp-1-3-parts.jpeg "3つの要素を含むテスト名")
 
 </details>
 
 <br/>
-<details><summary>© <b>Credits & read-more</b></summary>
-  1. <a href='https://osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html'>Roy Osherove - Naming standards for unit tests</a>
+<details><summary>© <b>出典・参考資料</b></summary>
+  1. <a href='https://osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html'>Roy Osherove — ユニットテストの命名規則</a>
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 1.2 Structure tests by the AAA pattern
+## ⚪️ 1.2 AAAパターンでテストを構成する
 
-:white_check_mark: **Do:** Structure your tests with 3 well-separated sections Arrange, Act & Assert (AAA). Following this structure guarantees that the reader spends no brain-CPU on understanding the test plan:
+:white_check_mark: **推奨：** Arrange（準備）、Act（実行）、Assert（検証）の3つの部分を明確に分けてテストを構成しましょう。頭文字を取ってAAAと呼びます。この構造に従えば、読み手はテストの段取りを理解するために頭を悩ませずに済みます。
 
-1st A - Arrange: All the setup code to bring the system to the scenario the test aims to simulate. This might include instantiating the unit under test constructor, adding DB records, mocking/stubbing on objects, and any other preparation code
+1つ目のA — Arrange：テストしたいシナリオを再現するための準備をすべて行います。テスト対象のインスタンス生成、DBレコードの追加、オブジェクトのモックやスタブの設定などが含まれます。
 
-2nd A - Act: Execute the unit under test. Usually 1 line of code
+2つ目のA — Act：テスト対象を実行します。通常は1行です。
 
-3rd A - Assert: Ensure that the received value satisfies the expectation. Usually 1 line of code
-
-<br/>
-
-❌ **Otherwise:** Not only do you spend hours understanding the main code but what should have been the simplest part of the day (testing) stretches your brain
+3つ目のA — Assert：得られた値が期待を満たすことを確認します。通常は1行です。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 本番コードの理解に何時間も使ったうえに、その日の仕事で最も簡単なはずのテストでも、頭を酷使することになります。
 
 <br/>
 
-### :clap: Doing It Right Example: A test structured with the AAA pattern
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest") ![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha")
+<br/>
+
+### :clap: 良い例：AAAパターンで構成したテスト
+
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例") ![Mochaを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mochaを使った例")
 
 ```javascript
 describe("Customer classifier", () => {
@@ -198,7 +223,7 @@ describe("Customer classifier", () => {
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: No separation, one bulk, harder to interpret
+### :thumbsdown: アンチパターン：区切りのない一塊のコードは意図を読み取りにくい
 
 ```javascript
 test("Should be classified as premium", () => {
@@ -213,20 +238,20 @@ test("Should be classified as premium", () => {
 
 <br/><br/>
 
-## ⚪ ️1.3 Describe expectations in a product language: use BDD-style assertions
+## ⚪️ 1.3 プロダクトの言葉で期待を記述する：BDDスタイルのアサーションを使う
 
-:white_check_mark: **Do:** Coding your tests in a declarative-style allows the reader to get the grab instantly without spending even a single brain-CPU cycle. When you write imperative code that is packed with conditional logic, the reader is forced to exert more brain-CPU cycles. In that case, code the expectation in a human-like language, declarative BDD style using `expect` or `should` and not using custom code. If Chai & Jest doesn't include the desired assertion and it’s highly repeatable, consider [extending Jest matcher (Jest)](https://jestjs.io/docs/en/expect#expectextendmatchers) or writing a [custom Chai plugin](https://www.chaijs.com/guide/plugins/)
+:white_check_mark: **推奨：** 宣言的なスタイルでテストを書けば、読み手はほとんど頭を使わずに意図をつかめます。条件分岐だらけの命令的なコードでは、そのぶん理解に負担がかかります。独自の判定コードを書くのではなく、`expect`や`should`を使い、人間の言葉に近い宣言的なBDDスタイルで期待を表現しましょう。ChaiやJestに目的のアサーションがなく、それを繰り返し使うのであれば、[Jestのマッチャーの拡張](https://jestjs.io/docs/en/expect#expectextendmatchers)や[独自のChaiプラグイン](https://www.chaijs.com/guide/plugins/)を検討してください。
 <br/>
 
-❌ **Otherwise:** The team will write less tests and decorate the annoying ones with .skip()
+❌ **守らないと：** チームが書くテストは減り、面倒なテストには`.skip()`が付けられるようになります。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary><br/>
+<details><summary>✏ <b>コード例</b></summary><br/>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha & Chai") ![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+![Mocha & Chaiを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mocha & Chaiを使った例") ![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
-### :thumbsdown: Anti-Pattern Example: The reader must skim through not so short, and imperative code just to get the test story
+### :thumbsdown: アンチパターン：テストの意図を知るだけで、長めの命令的なコードを読み解く必要がある
 
 ```javascript
 test("When asking for an admin, ensure only ordered admins in results", () => {
@@ -256,7 +281,7 @@ test("When asking for an admin, ensure only ordered admins in results", () => {
 
 <br/>
 
-### :clap: Doing It Right Example: Skimming through the following declarative test is a breeze
+### :clap: 良い例：宣言的なテストなら、ひと目で意図をつかめる
 
 ```javascript
 it("When asking for an admin, ensure only ordered admins in results", () => {
@@ -273,21 +298,23 @@ it("When asking for an admin, ensure only ordered admins in results", () => {
 
 <br/><br/>
 
-## ⚪ ️ 1.4 Stick to black-box testing: Test only public methods
+<a id="practice-1-4"></a>
 
-:white_check_mark: **Do:** Testing the internals brings huge overhead for almost nothing. If your code/API delivers the right results, should you really invest your next 3 hours in testing HOW it worked internally and then maintain these fragile tests? Whenever a public behavior is checked, the private implementation is also implicitly tested and your tests will break only if there is a certain problem (e.g. wrong output). This approach is also referred to as `behavioral testing`. On the other side, should you test the internals (white box approach) — your focus shifts from planning the component outcome to nitty-gritty details and your test might break because of minor code refactors although the results are fine - this dramatically increases the maintenance burden
+## ⚪️ 1.4 ブラックボックステストに徹する：公開メソッドだけをテストする
+
+:white_check_mark: **推奨：** 内部実装のテストは、大きな負担のわりに得るものがほとんどありません。コードやAPIが正しい結果を返しているのに、内部で「どう」動いたかのテストにさらに3時間を費やし、壊れやすいテストを保守する必要があるでしょうか。公開された振る舞いを確認すれば、非公開の実装も間接的にテストされます。テストが失敗するのは、出力が間違っているなど、実際に問題がある場合だけです。この方法は`振る舞いのテスト（behavioral testing）`とも呼ばれます。一方、内部実装を調べるホワイトボックス方式では、コンポーネントが生む結果から細かな実装へと関心が移ります。結果が正しくても小さなリファクタリングでテストが壊れ、保守の負担が大幅に増えてしまいます。
 <br/>
 
-❌ **Otherwise:** Your tests behave like the [boy who cried wolf](https://en.wikipedia.org/wiki/The_Boy_Who_Cried_Wolf): shouting false-positive cries (e.g., A test fails because a private variable name was changed). Unsurprisingly, people will soon start to ignore the CI notifications until someday, a real bug gets ignored…
+❌ **守らないと：** テストは[オオカミ少年](https://en.wikipedia.org/wiki/The_Boy_Who_Cried_Wolf)のように、誤った警報を出すようになります。たとえば非公開変数の名前を変えただけでテストが失敗します。やがてCIの通知が無視されるようになり、いつか本物のバグまで見過ごされてしまいます。
 
 <br/>
-<details><summary>✏ <b>Code Examples</b></summary>
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: A test case is testing the internals for no good reason
+### :thumbsdown: アンチパターン：正当な理由もなく内部実装をテストする
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha & Chai")
+![Mocha & Chaiを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mocha & Chaiを使った例")
 
 ```javascript
 class ProductService {
@@ -315,26 +342,26 @@ it("White-box test: When the internal methods get 0 vat, it return 0 response", 
 
 <br/><br/>
 
-## ⚪ ️ ️1.5 Choose the right test doubles: Avoid mocks in favor of stubs and spies
+## ⚪️ 1.5 適切なテストダブルを選ぶ：モックよりスタブとスパイを優先する
 
-:white_check_mark: **Do:** Test doubles are a necessary evil because they are coupled to the application internals, yet some provide immense value (<a href="https://martinfowler.com/articles/mocksArentStubs.html" data-href="https://martinfowler.com/articles/mocksArentStubs.html" class="markup--anchor markup--p-anchor" rel="noopener nofollow" target="_blank">[Read here a reminder about test doubles: mocks vs stubs vs spies](https://martinfowler.com/articles/mocksArentStubs.html)</a>).
+:white_check_mark: **推奨：** テストダブルはアプリケーションの内部実装と結び付くため、必要悪といえます。それでも大きな価値をもたらすものもあります（[モック・スタブ・スパイの違いについての解説](https://martinfowler.com/articles/mocksArentStubs.html)）。
 
-Before using test doubles, ask a very simple question: Do I use it to test functionality that appears, or could appear, in the requirements document? If not, it’s a white-box testing smell.
+テストダブルを使う前に、簡単な問いを自分に投げかけましょう。「これは要件書に書かれている、または書かれうる機能をテストするためのものか」。そうでなければ、ホワイトボックステストに陥っている兆候です。
 
-For example, if you want to test that your app behaves reasonably when the payment service is down, you might stub the payment service and trigger some ‘No Response’ return to ensure that the unit under test returns the right value. This checks our application behavior/response/outcome under certain scenarios. You might also use a spy to assert that an email was sent when that service is down — this is again a behavioral check which is likely to appear in a requirements doc (“Send an email if payment couldn’t be saved”). On the flip side, if you mock the Payment service and ensure that it was called with the right JavaScript types — then your test is focused on internal things that have nothing to do with the application functionality and are likely to change frequently
+たとえば、決済サービスが停止しているときにアプリケーションが適切に振る舞うことを確認したいなら、決済サービスをスタブに置き換えて「応答なし」の状態を作り、テスト対象が正しい値を返すことを確かめます。これは特定の状況におけるアプリケーションの振る舞い・応答・結果の確認です。サービス停止時にメールが送信されることをスパイで検証してもよいでしょう。これも「決済を保存できなければメールを送る」という、要件書に登場しそうな振る舞いの確認です。逆に、決済サービスをモックに置き換え、正しいJavaScriptの型で呼ばれたかを確認すると、テストはアプリケーションの機能と関係がなく、頻繁に変わりうる内部の事情に焦点を当てることになります。
 <br/>
 
-❌ **Otherwise:** Any refactoring of code mandates searching for all the mocks in the code and updating accordingly. Tests become a burden rather than a helpful friend
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** リファクタリングのたびに、コード中のモックをすべて探して修正しなければなりません。テストは頼れる味方ではなく、負担になってしまいます。
 
 <br/>
 
-### :thumbsdown: Anti-pattern example: Mocks focus on the internals
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Sinon-blue.svg "Examples with Sinon")
+<br/>
+
+### :thumbsdown: アンチパターン：内部実装に焦点を当てたモック
+
+![Sinonを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Sinon-blue.svg "Sinonを使った例")
 
 ```javascript
 it("When a valid product is about to be deleted, ensure data access DAL was called once, with the right product and right config", async () => {
@@ -352,7 +379,7 @@ it("When a valid product is about to be deleted, ensure data access DAL was call
 
 <br/>
 
-### :clap:Doing It Right Example: spies are focused on testing the requirements but as a side-effect are unavoidably touching to the internals
+### :clap: 良い例：スパイで要件を検証する。内部実装に触れるのは、そのために避けられない副作用にすぎない
 
 ```javascript
 it("When a valid product is about to be deleted, ensure an email is sent", async () => {
@@ -368,28 +395,30 @@ it("When a valid product is about to be deleted, ensure an email is sent", async
 
 <br/><br/>
 
-## 📗 Want to learn all these practices with live video?
+## 📗 これらのプラクティスを動画で学びたい方へ
 
-### Visit my online course [Testing Node.js & JavaScript From A To Z](https://www.testjavascript.com)
+### 著者のオンライン講座 [Testing Node.js & JavaScript From A To Z](https://www.testjavascript.com) をご覧ください
 
 <br/><br/>
 
-## ⚪ ️1.6 Don’t “foo”, use realistic input data
+<a id="practice-1-6"></a>
 
-:white_check_mark: **Do:** Often production bugs are revealed under some very specific and surprising input — the more realistic the test input is, the greater the chances are to catch bugs early. Use dedicated libraries like [Chance](https://github.com/chancejs/chancejs) or [Faker](https://www.npmjs.com/package/faker) to generate pseudo-real data that resembles the variety and form of production data. For example, such libraries can generate realistic phone numbers, usernames, credit cards, company names, and even ‘lorem ipsum’ text. You may also create some tests (on top of unit tests, not as a replacement) that randomize fakers' data to stretch your unit under test or even import real data from your production environment. Want to take it to the next level? See the next bullet (property-based testing).
+## ⚪️ 1.6 「foo」ではなく、実際にありそうな入力データを使う
+
+:white_check_mark: **推奨：** 本番のバグは、特定の予想外の入力によって見つかることがよくあります。テストの入力が現実に近いほど、早期にバグを発見できる可能性が高まります。[Chance](https://github.com/chancejs/chancejs)や[Faker](https://www.npmjs.com/package/faker)などの専用ライブラリを使い、本番データの多様性や形式に似た疑似データを生成しましょう。実在しそうな電話番号、ユーザー名、クレジットカード情報、会社名、さらには「lorem ipsum」の文章まで生成できます。ユニットテストを置き換えるのではなく追加する形で、生成データをランダム化して対象を広く試したり、本番環境の実データを取り込んだりするテストも考えられます。さらに進めたい場合は、次の項目のプロパティベーステストを参照してください。
 <br/>
 
-❌ **Otherwise:** All your development testing will falsely show green when you use synthetic inputs like “Foo”, but then production might turn red when a hacker passes-in a nasty string like “@3e2ddsf . ##’ 1 fdsfds . fds432 AAAA”
+❌ **守らないと：** 「Foo」のような単調な入力では開発中のテストがすべて成功し、誤った安心感を得てしまいます。本番で攻撃者が「@3e2ddsf . ##’ 1 fdsfds . fds432 AAAA」のような厄介な文字列を渡した途端に、失敗するかもしれません。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: A test suite that passes due to non-realistic data
+### :thumbsdown: アンチパターン：非現実的なデータのおかげで成功してしまうテストスイート
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
 ```javascript
 const addProduct = (name, price) => {
@@ -412,7 +441,7 @@ test("Wrong: When adding new product with valid properties, get successful confi
 
 <br/>
 
-### :clap:Doing It Right Example: Randomizing realistic input
+### :clap: 良い例：実際にありそうな入力をランダムに生成する
 
 ```javascript
 it("Better: When adding new valid product, get successful confirmation", async () => {
@@ -428,22 +457,22 @@ it("Better: When adding new valid product, get successful confirmation", async (
 
 <br/><br/>
 
-## ⚪ ️ 1.7 Test many input combinations using Property-based testing
+## ⚪️ 1.7 プロパティベーステストで多くの入力の組み合わせを試す
 
-:white_check_mark: **Do:** Typically we choose a few input samples for each test. Even when the input format resembles real-world data (see bullet [‘Don’t foo’](https://github.com/goldbergyoni/javascript-testing-best-practices#-%EF%B8%8F16-dont-foo-use-realistic-input-data)), we cover only a few input combinations (method(‘’, true, 1), method(“string” , false , 0)), However, in production, an API that is called with 5 parameters can be invoked with thousands of different permutations, one of them might render our process down ([see Fuzz Testing](https://en.wikipedia.org/wiki/Fuzzing)). What if you could write a single test that sends 1000 permutations of different inputs automatically and catches for which input our code fails to return the right response? Property-based testing is a technique that does exactly that: sending all the possible input combinations to your unit under test it increases the serendipity of finding a bug. For example, given a method — addNewProduct(id, name, isDiscount) — the supporting libraries will call this method with many combinations of (number, string, boolean) like (1, “iPhone”, false), (2, “Galaxy”, true). You can run property-based testing using your favorite test runner (Mocha, Jest, etc) using libraries like [js-verify](https://github.com/jsverify/jsverify) or [testcheck](https://github.com/leebyron/testcheck-js) (much better documentation). Update: Nicolas Dubien suggests in the comments below to [checkout fast-check](https://github.com/dubzzz/fast-check#readme) which seems to offer some additional features and also to be actively maintained
+:white_check_mark: **推奨：** 通常、各テストでは少数の入力例を選びます。[「foo」を使わない](#practice-1-6)という助言に従って現実的な形式にしても、試すのは`method('', true, 1)`や`method("string", false, 0)`など、ごく一部の組み合わせにすぎません。しかし本番では、引数を5つ取るAPIに何千もの組み合わせが渡され、そのうち1つがプロセスを停止させるかもしれません（[ファジング](https://en.wikipedia.org/wiki/Fuzzing)も参照）。1つのテストから異なる入力の組み合わせを1,000通り自動的に送り、どの入力で正しい応答が得られないかを特定できたらどうでしょう。まさにそれを行うのがプロパティベーステストです。テスト対象に可能な入力の組み合わせを幅広く与え、思いがけないバグに出会う機会を増やします。たとえば`addNewProduct(id, name, isDiscount)`というメソッドがあれば、ライブラリは`(1, "iPhone", false)`、`(2, "Galaxy", true)`など、数値・文字列・真偽値のさまざまな組み合わせで呼び出します。[js-verify](https://github.com/jsverify/jsverify)や、より充実したドキュメントを備える[testcheck](https://github.com/leebyron/testcheck-js)を使えば、MochaやJestなど、普段使っているテストランナーで実行できます。追記：Nicolas Dubienから、追加機能があり活発に保守されているように見える[fast-check](https://github.com/dubzzz/fast-check#readme)も勧められました。
 <br/>
 
-❌ **Otherwise:** Unconsciously, you choose the test inputs that cover only code paths that work well. Unfortunately, this decreases the efficiency of testing as a vehicle to expose bugs
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 無意識のうちに、正常に動くコードパスだけを通る入力を選びがちです。その結果、バグを見つける手段としてのテストの効果が下がります。
 
 <br/>
 
-### :clap: Doing It Right Example: Testing many input permutations with “fast-check”
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+<br/>
+
+### :clap: 良い例：fast-checkで多くの入力の組み合わせを試す
+
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
 ```javascript
 import fc from "fast-check";
@@ -465,26 +494,26 @@ describe("Product service", () => {
 
 <br/><br/>
 
-## ⚪ ️ 1.8 If needed, use only short & inline snapshots
+## ⚪️ 1.8 スナップショットが必要なら、短くインラインで記述する
 
-:white_check_mark: **Do:** When there is a need for [snapshot testing](https://jestjs.io/docs/en/snapshot-testing), use only short and focused snapshots (i.e. 3-7 lines) that are included as part of the test ([Inline Snapshot](https://jestjs.io/docs/en/snapshot-testing#inline-snapshots)) and not within external files. Keeping this guideline will ensure your tests remain self-explanatory and less fragile.
+:white_check_mark: **推奨：** [スナップショットテスト](https://jestjs.io/docs/en/snapshot-testing)が必要な場合は、3〜7行程度の短く焦点を絞ったスナップショットだけを使いましょう。外部ファイルではなく、テストの中に[インラインスナップショット](https://jestjs.io/docs/en/snapshot-testing#inline-snapshots)として記述します。そうすれば、テストはそれ自体で意図が伝わり、壊れにくくなります。
 
-On the other hand, ‘classic snapshots’ tutorials and tools encourage storing big files (e.g. component rendering markup, API JSON result) over some external medium and ensure each time when the test runs to compare the received result with the saved version. This, for example, can implicitly couple our test to 1000 lines with 3000 data values that the test writer never read and reasoned about. Why is this wrong? By doing so, there are 1000 reasons for your test to fail - it’s enough for a single line to change for the snapshot to get invalid and this is likely to happen a lot. How frequently? for every space, comment, or minor CSS/HTML change. Not only this, the test name wouldn’t give a clue about the failure as it just checks that 1000 lines didn’t change, also it encourages the test writer to accept as the desired true a long document he couldn’t inspect and verify. All of these are symptoms of obscure and eager test that is not focused and aims to achieve too much
+一方、従来型のスナップショットの解説やツールは、コンポーネントの描画結果のマークアップやAPIのJSON応答などを大きな外部ファイルとして保存し、テストのたびに現在の結果と比較する方法を勧めています。これでは、テストの作者が読んでも検討してもいない1,000行・3,000個の値に、テストが暗黙のうちに結び付いてしまいます。何が問題なのでしょうか。テストが失敗する理由が1,000個もできてしまうことです。1行変わるだけでスナップショットが一致しなくなり、それは空白やコメント、小さなCSS・HTMLの変更のたびに起こりえます。しかもテスト名からは原因を推測できません。単に1,000行が変わっていないかを確認しているだけだからです。さらに、検査も検証もできていない長い文書を「正解」として受け入れることを促してしまいます。どれも、焦点が定まらず、一度に多くを確かめようとする、意図の不明瞭なテストの兆候です。
 
-It’s worth noting that there are few cases where long & external snapshots are acceptable - when asserting on schema and not data (extracting out values and focusing on fields) or when the received document rarely changes
+ただし、長い外部スナップショットが許容できるケースもあります。値を取り除いてフィールドに着目し、データではなくスキーマを検証する場合や、対象の文書がめったに変わらない場合です。
 <br/>
 
-❌ **Otherwise:** A UI test fails. The code seems right, the screen renders perfect pixels, what happened? your snapshot testing just found a difference from the original document to the current received one - a single space character was added to the markdown...
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** UIテストが失敗しました。コードは正しく見え、画面もきれいに表示されています。何が起きたのでしょう。スナップショットが差分として検出したのは、Markdownに追加された空白1文字だけだった、ということになりかねません。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: Coupling our test to unseen 2000 lines of code
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+<br/>
+
+### :thumbsdown: アンチパターン：目を通していない2,000行のコードにテストを結び付ける
+
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
 ```javascript
 it("TestJavaScript.com is renderd correctly", () => {
@@ -504,7 +533,7 @@ it("TestJavaScript.com is renderd correctly", () => {
 
 <br/>
 
-### :clap: Doing It Right Example: Expectations are visible and focused
+### :clap: 良い例：期待する内容が見えていて、焦点が絞られている
 
 ```javascript
 it("When visiting TestJavaScript.com home page, a menu is displayed", () => {
@@ -532,22 +561,22 @@ it("When visiting TestJavaScript.com home page, a menu is displayed", () => {
 
 <br/><br/>
 
-## ⚪ ️ 1.9 Copy code, but only what's neccessary
+## ⚪️ 1.9 コードを複製するなら、必要な部分だけにする
 
-:white_check_mark: **Do:** Include all the necessary details that affect the test result, but nothing more. As an example, consider a test that should factor 100 lines of input JSON - Pasting this in every test is tedious. Extracting it outside to transferFactory.getJSON() will leave the test vague - Without data, it's hard to correlate the test result with the cause ("why is it supposed to return 400 status?"). The classic book x-unit patterns named this pattern 'the mystery guest' - Something unseen affected our test results, we don't know what exactly. We can do better by extracting repeatable long parts outside AND mentioning explicitly which specific details matter to the test. Going with the example above, the test can pass parameters that highlight what is important: transferFactory.getJSON({sender: undefined}). In this example, the reader should immediately infer that the empty sender field is the reason why the test should expect a validation error or any other similar adequate outcome.
+:white_check_mark: **推奨：** テストの結果に影響する情報はすべて含め、それ以外は含めないようにしましょう。たとえば、入力用に100行のJSONを組み立てるテストを考えます。毎回そのまま貼り付けるのは大変です。一方、すべてを外部の`transferFactory.getJSON()`に移すと、テストの意味が曖昧になります。データが見えなければ、「なぜステータス400を返すはずなのか」といった、結果と原因の関係がわかりにくいからです。名著『xUnit Test Patterns』では、これを「ミステリーゲスト」と呼びます。見えない何かが結果に影響しているのに、その正体がわからない状態です。繰り返し登場する長い部分は外に出しつつ、テストに重要な情報は明示すれば改善できます。先ほどの例なら、`transferFactory.getJSON({sender: undefined})`と引数を渡して重要な点を強調します。これなら読み手は、senderフィールドが空であるために、バリデーションエラーなどの適切な結果を期待しているのだとすぐに理解できます。
 <br/>
 
-❌ **Otherwise:** Copying 500 JSON lines in will leave your tests unmaintainable and unreadable. Moving everything outside will end with vague tests that are hard to understand
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 500行のJSONを毎回コピーすれば、読みにくく保守できないテストになります。すべてを外に出せば、何をしているのかつかみにくいテストになります。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: The test failure is unclear because all the cause is external and hides within huge JSON
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha")
+<br/>
+
+### :thumbsdown: アンチパターン：原因が外部の巨大なJSONに隠れていて、失敗の理由がわからない
+
+![Mochaを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mochaを使った例")
 
 ```javascript
 test("When no credit, then the transfer is declined", async() => {
@@ -565,7 +594,7 @@ test("When no credit, then the transfer is declined", async() => {
 
 <br/>
 
-### :clap: Doing It Right Example: The test highlights what is the cause of the test result
+### :clap: 良い例：その結果になる理由をテスト自身が明示している
 
 ```javascript
 
@@ -586,24 +615,24 @@ test("When no credit, then the transfer is declined ", async() => {
 
 <br/><br/>
 
-## ⚪ ️ 1.10 Don’t catch errors, expect them
+## ⚪️ 1.10 エラーをcatchするのではなく、発生することを期待する
 
-:white_check_mark: **Do:** When trying to assert that some input triggers an error, it might look right to use try-catch-finally and asserts that the catch clause was entered. The result is an awkward and verbose test case (example below) that hides the simple test intent and the result expectations
+:white_check_mark: **推奨：** ある入力でエラーが起きることを検証するとき、try-catch-finallyを使い、catch節に入ったかを確かめたくなるかもしれません。しかし、その方法では次の例のように不自然で冗長なテストになり、本来は単純な意図と期待する結果が見えにくくなります。
 
-A more elegant alternative is the using the one-line dedicated Chai assertion: expect(method).to.throw (or in Jest: expect(method).toThrow()). It’s absolutely mandatory to also ensure the exception contains a property that tells the error type, otherwise given just a generic error the application won’t be able to do much rather than show a disappointing message to the user
+より簡潔なのは、Chaiの専用アサーション`expect(method).to.throw`、またはJestの`expect(method).toThrow()`を1行で使う方法です。例外にエラーの種類を示すプロパティが含まれることも、必ず確認してください。一般的なエラーしかなければ、アプリケーションはユーザーに残念なメッセージを表示する以上の対応ができません。
 <br/>
 
-❌ **Otherwise:** It will be challenging to infer from the test reports (e.g. CI reports) what went wrong
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** CIなどのテストレポートから、何が問題だったのかを読み取るのが難しくなります。
 
 <br/>
 
-### :thumbsdown: Anti-pattern Example: A long test case that tries to assert the existence of error with try-catch
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha")
+<br/>
+
+### :thumbsdown: アンチパターン：try-catchでエラーの発生を確かめる、長いテストケース
+
+![Mochaを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mochaを使った例")
 
 ```javascript
 it("When no product name, it throws error 400", async () => {
@@ -622,7 +651,7 @@ it("When no product name, it throws error 400", async () => {
 
 <br/>
 
-### :clap: Doing It Right Example: A human-readable expectation that could be understood easily, maybe even by QA or technical PM
+### :clap: 良い例：QA担当者や技術に詳しいPMにも理解できそうな、読みやすい期待の記述
 
 ```javascript
 it("When no product name, it throws error 400", async () => {
@@ -636,22 +665,22 @@ it("When no product name, it throws error 400", async () => {
 
 <br/><br/>
 
-## ⚪ ️ 1.11 Tag your tests
+## ⚪️ 1.11 テストにタグを付ける
 
-:white_check_mark: **Do:** Different tests must run on different scenarios: quick smoke, IO-less, tests should run when a developer saves or commits a file, full end-to-end tests usually run when a new pull request is submitted, etc. This can be achieved by tagging tests with keywords like #cold #api #sanity so you can grep with your testing harness and invoke the desired subset. For example, this is how you would invoke only the sanity test group with Mocha: mocha — grep ‘sanity’
+:white_check_mark: **推奨：** テストの種類によって、実行すべきタイミングは異なります。I/Oを伴わない短いスモークテストは保存やコミットのたびに、完全なE2Eテストは通常、新しいプルリクエストの作成時に実行します。`#cold`、`#api`、`#sanity`などのキーワードでタグ付けすると、テスト実行ツールで検索し、必要なものだけを動かせます。たとえばMochaでsanityグループだけを実行するなら、`mocha --grep 'sanity'`を使います。
 <br/>
 
-❌ **Otherwise:** Running all the tests, including tests that perform dozens of DB queries, any time a developer makes a small change can be extremely slow and keeps developers away from running tests
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 開発者が少し変更するたびに、何十回もDBを問い合わせるものを含む全テストが動くと、非常に時間がかかり、テストを実行しなくなってしまいます。
 
 <br/>
 
-### :clap: Doing It Right Example: Tagging tests as ‘#cold-test’ allows the test runner to execute only fast tests (Cold===quick tests that are doing no IO and can be executed frequently even as the developer is typing)
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+<br/>
+
+### :clap: 良い例：「#cold-test」タグで高速なテストだけを実行する。ColdとはI/Oを伴わず、入力中でも頻繁に実行できる短いテストのこと
+
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
 ```javascript
 //this test is fast (no DB) and we're tagging it correspondigly
@@ -669,23 +698,23 @@ describe("Order service", function() {
 
 <br/><br/>
 
-## ⚪ ️ 1.12 Categorize tests under at least 2 levels
+## ⚪️ 1.12 テストを少なくとも2階層に分類する
 
-:white_check_mark: **Do:** Apply some structure to your test suite so an occasional visitor could easily understand the requirements (tests are the best documentation) and the various scenarios that are being tested. A common method for this is by placing at least 2 'describe' blocks above your tests: the 1st is for the name of the unit under test and the 2nd for an additional level of categorization like the scenario or custom categories (see code examples and the print screen below). Doing so will also greatly improve the test reports: The reader will easily infer the test categories, delve into the desired section and correlate failing tests. In addition, it will get much easier for a developer to navigate through the code of a suite with many tests. There are multiple alternative structures for the test suite that you may consider like [given-when-then](https://github.com/searls/jasmine-given) and [RITE](https://github.com/ericelliott/riteway)
-
-<br/>
-
-❌ **Otherwise:** When looking at a report with a flat and long list of tests, the reader has to skim-read through long texts to conclude the major scenarios and correlate the commonality of failing tests. Consider the following case: When 7/100 tests fail, looking at a flat list will demand reading the text of the failing to see how they relate to each other. However, in a hierarchical report, all of them could be under the same flow or category and the reader will quickly infer what or at least where is the root failure cause
+:white_check_mark: **推奨：** テストスイートに構造を持たせ、ときどき読む人でも要件と各シナリオを理解できるようにしましょう。テストは最良のドキュメントです。よく使われる方法は、各テストを少なくとも2つの`describe`ブロックで囲むことです。1つ目にはテスト対象の名前を、2つ目にはシナリオや独自のカテゴリなどを指定します。以下のコード例と画面を参照してください。テストレポートも読みやすくなり、カテゴリを把握して必要な箇所を詳しく見たり、失敗したテストの共通点を見つけたりしやすくなります。テスト数が多いスイートのコードもたどりやすくなります。ほかにも[given-when-then](https://github.com/searls/jasmine-given)や[RITE](https://github.com/ericelliott/riteway)などの構造を検討できます。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** テストが平坦な長い一覧になっていると、主なシナリオや失敗したテストの共通点を知るために、長文を読み流す必要があります。100件中7件が失敗した場合を考えてください。平坦な一覧では、失敗した各テストの文章を読んで関係を調べなければなりません。階層的なレポートなら、同じフローやカテゴリの配下でまとめて失敗しているとわかり、根本原因や少なくともその所在を素早く推測できます。
 
 <br/>
 
-### :clap: Doing It Right Example: Structuring suite with the name of unit under test and scenarios will lead to the convenient report that is shown below
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+<br/>
+
+### :clap: 良い例：テスト対象名とシナリオでスイートを構成すると、次のような読みやすいレポートになる
+
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
 ```javascript
 // Unit under test
@@ -701,13 +730,13 @@ describe("Transfer service", () => {
 });
 ```
 
-![alt text](assets/hierarchical-report.png)
+![テスト対象とシナリオごとに階層化されたレポート](assets/hierarchical-report.png)
 
 <br/>
 
-### :thumbsdown: Anti-pattern Example: A flat list of tests will make it harder for the reader to identify the user stories and correlate failing tests
+### :thumbsdown: アンチパターン：平坦なテスト一覧では、ユーザーストーリーや失敗したテストの関係をつかみにくい
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Mocha")
+![Mochaを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Mochaを使った例")
 
 ```javascript
 test("Then the response status should decline", () => {});
@@ -717,7 +746,7 @@ test("Then it should send email", () => {});
 test("Then there should not be a new transfer record", () => {});
 ```
 
-![alt text](assets/flat-report.png)
+![階層のない平坦なテストレポート](assets/flat-report.png)
 
 <br/>
 
@@ -725,120 +754,122 @@ test("Then there should not be a new transfer record", () => {});
 
 <br/><br/>
 
-## ⚪ ️1.13 Other generic good testing hygiene
+## ⚪️ 1.13 テスト全般で押さえておきたい、そのほかの基本
 
-:white_check_mark: **Do:** This post is focused on testing advice that is related to or at least can be exemplified with Node JS. This bullet, however, groups a few non-Node related tips that are well-known
+:white_check_mark: **推奨：** このガイドはNode.jsに関係する助言、または少なくともNode.jsで例示できる助言を中心にしています。この項目では、Node.jsに限らない、よく知られた基本をまとめます。
 
-Learn and practice [TDD principles](https://www.sm-cloud.com/book-review-test-driven-development-by-example-a-tldr/) — they are extremely valuable for many but don’t get intimidated if they don’t fit your style, you’re not the only one. Consider writing the tests before the code in a [red-green-refactor style](https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html), ensure each test checks exactly one thing, when you find a bug — before fixing write a test that will detect this bug in the future, and let each test fail at least once before turning green, start a module by writing a quick and simplistic code that satisfies the test - then refactor gradually and take it to a production grade level, avoid any dependency on the environment (paths, OS, etc)
+[TDDの原則](https://www.sm-cloud.com/book-review-test-driven-development-by-example-a-tldr/)を学び、実践してみましょう。多くの人にとって非常に有益ですが、自分のスタイルに合わなくても気後れする必要はありません。そう感じるのはあなただけではありません。[レッド・グリーン・リファクタリング](https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html)の流れで、実装より先にテストを書くことを検討してください。各テストでは1つのことだけを確認します。バグを見つけたら、修正前に、将来同じバグを検出できるテストを書きます。各テストは、成功させる前に少なくとも一度は失敗させてください。モジュールは、まずテストを満たす簡単なコードから始め、段階的にリファクタリングして本番に耐える品質へ引き上げます。パスやOSなど、環境への依存も避けましょう。
 <br/>
 
-❌ **Otherwise:** You‘ll miss pearls of wisdom that were collected for decades
+❌ **守らないと：** 何十年もかけて蓄積された知恵を取り逃してしまいます。
 
 <br/><br/>
 
-# Section 2️⃣: Backend Testing
+<a id="section-2"></a>
 
-## ⚪ ️2.1 Enrich your testing portfolio: Look beyond unit tests and the pyramid
+# 第2章：バックエンドのテスト
 
-:white_check_mark: **Do:** The [testing pyramid](https://martinfowler.com/bliki/TestPyramid.html), though 10> years old, is a great and relevant model that suggests three testing types and influences most developers’ testing strategies. At the same time, more than a handful of shiny new testing techniques emerged and are hiding in the shadows of the testing pyramid. Given all the dramatic changes that we’ve seen in the recent 10 years (Microservices, cloud, serverless), is it even possible that one quite-old model will suit *all* types of applications? shouldn’t the testing world consider welcoming new testing techniques?
+## ⚪️ 2.1 テストの選択肢を広げる：ユニットテストとテストピラミッドの先を見る
 
-Don’t get me wrong, in 2019 the testing pyramid, TDD, and unit tests are still a powerful technique and are probably the best match for many applications. Only like any other model, despite its usefulness, [it must be wrong sometimes](https://en.wikipedia.org/wiki/All_models_are_wrong). For example, consider an IoT application that ingests many events into a message-bus like Kafka/RabbitMQ, which then flow into some data-warehouse and are eventually queried by some analytics UI. Should we really spend 50% of our testing budget on writing unit tests for an application that is integration-centric and has almost no logic? As the diversity of application types increases (bots, crypto, Alexa-skills) greater are the chances to find scenarios where the testing pyramid is not the best match.
+:white_check_mark: **推奨：** [テストピラミッド](https://martinfowler.com/bliki/TestPyramid.html)は、提唱から10年以上が経っても有用なモデルです。3種類のテストを提示し、多くの開発者のテスト戦略に影響を与えています。その一方で、新しく有望なテスト手法が数多く登場しているのに、ピラミッドの陰に隠れてしまっています。マイクロサービス、クラウド、サーバーレスなど、この10年の劇的な変化を踏まえると、かなり前の1つのモデルが*あらゆる*アプリケーションに適合するでしょうか。テストの世界でも、新しい手法をもっと受け入れるべきではないでしょうか。
 
-It’s time to enrich your testing portfolio and become familiar with more testing types (the next bullets suggest a few ideas), mind models like the testing pyramid but also match testing types to real-world problems that you’re facing (‘Hey, our API is broken, let’s write consumer-driven contract testing!’), diversify your tests like an investor that builds a portfolio based on risk analysis — assess where problems might arise and match some prevention measures to mitigate those potential risks
+誤解しないでください。2019年の時点でも、テストピラミッド、TDD、ユニットテストは強力で、多くのアプリケーションに最適な選択肢でしょう。ただ、どのモデルもそうであるように、有用であっても[常に正しいとは限りません](https://en.wikipedia.org/wiki/All_models_are_wrong)。たとえば、多数のイベントをKafkaやRabbitMQのメッセージバスに取り込み、データウェアハウスへ流し、最後に分析用UIから問い合わせるIoTアプリケーションを考えます。連携が中心でロジックがほとんどないアプリケーションに、テスト予算の50%をユニットテストとして投入するべきでしょうか。ボット、暗号資産、Alexaスキルなど、アプリケーションの種類が多様化するほど、テストピラミッドが最適ではない状況も増えます。
 
-A word of caution: the TDD argument in the software world takes a typical false-dichotomy face, some preach to use it everywhere, and others think it’s the devil. Everyone who speaks in absolutes is wrong :]
+テストの選択肢を広げ、さらに多くの種類を知りましょう。次の項目から、そのためのアイデアをいくつか紹介します。テストピラミッドなどのモデルを意識しつつ、実際に直面している問題に合うテストを選んでください。「APIの互換性が壊れた。それなら利用者主導のコントラクトテストを書こう」といった具合です。リスク分析に基づいてポートフォリオを組む投資家のように、テストも分散させます。どこに問題が生じそうかを評価し、そのリスクを抑える対策を対応付けましょう。
 
-<br/>
-
-❌ **Otherwise:** You’re going to miss some tools with amazing ROI, some like Fuzz, lint, and mutation can provide value in 10 minutes
+なお、ソフトウェア業界のTDD論争は、誤った二者択一に陥りがちです。どこでも使うべきだという人もいれば、悪魔のように扱う人もいます。絶対論で語る人は、誰であれ間違っています :]
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 驚くほど費用対効果の高いツールを見逃します。ファジング、リント、ミューテーションテストなどには、10分で価値を得られるものもあります。
 
 <br/>
 
-### :clap: Doing It Right Example: Cindy Sridharan suggests a rich testing portfolio in her amazing post ‘Testing Microservices — the same way’
-
-![alt text](assets/bp-12-rich-testing.jpeg "Cindy Sridharan suggests a rich testing portfolio in her amazing post ‘Testing Microservices — the sane way’")
-
-<strong class="markup--strong markup--p-strong">☺️Example: </strong><a href="https://www.youtube.com/watch?v=-2zP494wdUY&amp;feature=youtube" data-href="https://www.youtube.com/watch?v=-2zP494wdUY&amp;feature=youtu.be" class="markup--anchor markup--p-anchor" rel="nofollow noopener" target="_blank">[YouTube: “Beyond Unit Tests: 5 Shiny Node.JS Test Types (2018)” (Yoni Goldberg)](https://www.youtube.com/watch?v=-2zP494wdUY&feature=youtu.be)</a>
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-![alt text](assets/bp-12-Yoni-Goldberg-Testing.jpeg "A test name that constitutes 3 parts")
+### :clap: 良い例：Cindy Sridharanが優れた記事「Testing Microservices — the sane way」で提案する、多様なテストの組み合わせ
+
+![Cindy Sridharanによる多様なテストの組み合わせ](assets/bp-12-rich-testing.jpeg "記事『Testing Microservices — the sane way』で提案されているテストの組み合わせ")
+
+**☺️ 例：** [YouTube：ユニットテストの先へ — 注目のNode.jsテスト5種類（2018年、Yoni Goldberg）](https://www.youtube.com/watch?v=-2zP494wdUY&feature=youtu.be)
+
+<br/>
+
+![Yoni Goldbergによるテスト手法の紹介](assets/bp-12-Yoni-Goldberg-Testing.jpeg "ユニットテストの先にあるテスト手法")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️2.2 Component testing might be your best affair
+## ⚪️ 2.2 コンポーネントテストが最良の選択肢かもしれない
 
-:white_check_mark: **Do:** Each unit test covers a tiny portion of the application and it’s expensive to cover the whole, whereas end-to-end testing easily covers a lot of ground but is flaky and slower, why not apply a balanced approach and write tests that are bigger than unit tests but smaller than end-to-end testing? Component testing is the unsung song of the testing world — they provide the best of both worlds: reasonable performance and a possibility to apply TDD patterns + realistic and great coverage.
+:white_check_mark: **推奨：** ユニットテストが確認するのはアプリケーションのごく一部であり、全体を網羅するには費用がかかります。一方、E2Eテストは広範囲を簡単に確認できますが、不安定で遅くなりがちです。それなら、ユニットテストより大きく、E2Eテストより小さい、バランスの取れたテストを書いてはどうでしょう。コンポーネントテストは、テストの世界で十分に評価されていない手法です。適度な実行速度とTDDの適用しやすさに、現実に近い広い網羅性を兼ね備えています。
 
-Component tests focus on the Microservice ‘unit’, they work against the API and don’t mock anything which belongs to the Microservice itself (e.g. real DB, or at least the in-memory version of that DB) but stub anything that is external like calls to other Microservices. By doing so, we test what we deploy, approach the app from outward to inward and gain great confidence in a reasonable amount of time.
+コンポーネントテストは、マイクロサービスを1つの「単位」として扱います。APIを通じて操作し、そのマイクロサービス自身に属するものはモックにしません。DBも実物、少なくとも同じDBのインメモリ版を使います。一方、ほかのマイクロサービスへの呼び出しなど、外部のものはスタブに置き換えます。これにより、実際にデプロイするものを、外側から内側へとテストでき、妥当な時間で大きな安心感を得られます。
 
-[We have a full guide that is solely dedicated to writing component tests in the right way](https://github.com/testjavascript/nodejs-integration-tests-best-practices)
-
-<br/>
-
-❌ **Otherwise:** You may spend long days on writing unit tests to find out that you got only 20% system coverage
+[コンポーネントテストの適切な書き方に特化した、詳しいガイドもあります](https://github.com/testjavascript/nodejs-integration-tests-best-practices)。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 何日もかけてユニットテストを書いたのに、システム全体の20%しかカバーできていなかった、ということになりかねません。
 
 <br/>
 
-### :clap: Doing It Right Example: Supertest allows approaching Express API in-process (fast and cover many layers)
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha")
+<br/>
 
-![alt text](assets/bp-13-component-test-yoni-goldberg.png " [Supertest](https://www.npmjs.com/package/supertest) allows approaching Express API in-process (fast and cover many layers)")
+### :clap: 良い例：Supertestで同一プロセス内からExpress APIを呼び出す。高速で、複数の層を確認できる
+
+![Mochaを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mochaを使った例")
+
+![Supertestを使ったコンポーネントテスト](assets/bp-13-component-test-yoni-goldberg.png "Supertestなら同一プロセス内でExpress APIを呼び出し、複数の層を高速にテストできる")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️2.3 Ensure new releases don’t break the API using contract tests
+## ⚪️ 2.3 コントラクトテストで、新しいリリースがAPIの互換性を壊さないことを確認する
 
-:white_check_mark: **Do:** So your Microservice has multiple clients, and you run multiple versions of the service for compatibility reasons (keeping everyone happy). Then you change some field and ‘boom!’, some important client who relies on this field is angry. This is the Catch-22 of the integration world: It’s very challenging for the server side to consider all the multiple client expectations — On the other hand, the clients can’t perform any testing because the server controls the release dates. There is a spectrum of techniques that can mitigate the contract problem, some are simple, other are more feature-rich and demand a steeper learning curve. In a simple and recommended approach, the API provider publishes npm package with the API typing (e.g. JSDoc, TypeScript). Then the consumers can fetch this library and benefit from codign time intellisense and validation. A fancier approach is to use [PACT](https://docs.pact.io/) which was born to formalize this process with a very disruptive approach — not the server defines the test plan itself rather the client defines the tests of the… server! PACT can record the client expectation and put it in a shared location, “broker”, so the server can pull the expectations and run on every build using the PACT library to detect broken contracts — a client expectation that is not met. By doing so, all the server-client API mismatches are caught early during build/CI and might save you a great deal of frustration
+:white_check_mark: **推奨：** マイクロサービスには複数のクライアントがあり、互換性を保つために複数のバージョンを運用しているとします。あるフィールドを変えた途端、そのフィールドに依存する重要なクライアントが動かなくなりました。これはシステム連携の世界のジレンマです。サーバー側がすべてのクライアントの期待を把握するのは困難ですが、リリース日を決めるのはサーバー側なので、クライアント側も自由にテストできません。この契約上の問題を緩和する手法には、単純なものから、高機能で習得に時間がかかるものまであります。簡単で推奨できる方法は、API提供側がJSDocやTypeScriptなどでAPIの型を記述したnpmパッケージを公開することです。利用側はそのライブラリを取り込み、実装中の補完や検証を利用できます。さらに高度な方法が[PACT](https://docs.pact.io/)です。PACTは、この手続きを仕組み化するために、サーバーではなくクライアントが「サーバーのテスト」を定義するという画期的な考え方を採用しています。クライアントの期待を記録し、「ブローカー」という共有の場所に置くと、サーバーはそれを取得し、ビルドごとにPACTライブラリで実行できます。これにより、満たされていないクライアントの期待、つまり契約違反を検出します。サーバーとクライアントのAPIの不一致をビルドやCIで早期に見つけられれば、多くの苦労を避けられます。
 <br/>
 
-❌ **Otherwise:** The alternatives are exhausting manual testing or deployment fear
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 消耗する手動テストを続けるか、デプロイを恐れながら過ごすことになります。
 
 <br/>
 
-### :clap: Doing It Right Example:
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20PACT-blue.svg "Examples with PACT")
+<br/>
 
-![alt text](assets/bp-14-testing-best-practices-contract-flow.png)
+### :clap: 良い例：コントラクトテストの流れ
+
+![PACTを使った例](https://img.shields.io/badge/🔧%20Example%20using%20PACT-blue.svg "PACTを使った例")
+
+![PACTによるコントラクトテストの流れ](assets/bp-14-testing-best-practices-contract-flow.png)
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 2.4 Test your middlewares in isolation
+## ⚪️ 2.4 ミドルウェアを単独でテストする
 
-:white_check_mark: **Do:** Many avoid Middleware testing because they represent a small portion of the system and require a live Express server. Both reasons are wrong — Middlewares are small but affect all or most of the requests and can be tested easily as pure functions that get {req,res} JS objects. To test a middleware function one should just invoke it and spy ([using Sinon for example](https://www.npmjs.com/package/sinon)) on the interaction with the {req,res} objects to ensure the function performed the right action. The library [node-mock-http](https://www.npmjs.com/package/node-mocks-http) takes it even further and factors the {req,res} objects along with spying on their behavior. For example, it can assert whether the http status that was set on the res object matches the expectation (See example below)
+:white_check_mark: **推奨：** ミドルウェアはシステムの小さな一部分で、稼働中のExpressサーバーも必要だとして、テストを避ける人がいます。しかし、どちらも適切な理由ではありません。ミドルウェアは小さくても、すべて、または大半のリクエストに影響します。また、`req`と`res`というJavaScriptオブジェクトを受け取る純粋な関数のように、簡単にテストできます。関数を直接呼び出し、`req`・`res`とのやり取りを[Sinonなど](https://www.npmjs.com/package/sinon)のスパイで監視して、適切な操作が行われたか確かめればよいのです。[node-mocks-http](https://www.npmjs.com/package/node-mocks-http)なら、`req`・`res`オブジェクトの生成と、その振る舞いの監視まで行えます。たとえば次の例では、`res`に設定されたHTTPステータスが期待どおりかを検証します。
 <br/>
 
-❌ **Otherwise:** A bug in Express middleware === a bug in all or most requests
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** Expressのミドルウェアのバグは、すべて、または大半のリクエストのバグに直結します。
 
 <br/>
 
-### :clap:Doing It Right Example: Testing middleware in isolation without issuing network calls and waking-up the entire Express machine
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Examples with Jest")
+<br/>
+
+### :clap: 良い例：ネットワーク通信やExpress全体の起動なしで、ミドルウェアを単独でテストする
+
+![Jestを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Jest-blue.svg "Jestを使った例")
 
 ```javascript
 //the middleware we want to test
@@ -863,69 +894,71 @@ test("A request without authentication header, should return http status 403", (
 
 <br/><br/>
 
-## ⚪ ️2.5 Measure and refactor using static analysis tools
+## ⚪️ 2.5 静的解析ツールで測定し、リファクタリングする
 
-:white_check_mark: **Do:** Using static analysis tools helps by giving objective ways to improve code quality and keep your code maintainable. You can add static analysis tools to your CI build to abort when it finds code smells. Its main selling points over plain linting are the ability to inspect quality in the context of multiple files (e.g. detect duplications), perform advanced analysis (e.g. code complexity) and follow the history and progress of code issues. Two examples of tools you can use are [SonarQube](https://www.sonarqube.org/) (4,900+ [stars](https://github.com/SonarSource/sonarqube)) and [Code Climate](https://codeclimate.com/) (2,000+ [stars](https://github.com/codeclimate/codeclimate))
+:white_check_mark: **推奨：** 静的解析ツールは、コード品質を改善し、保守しやすい状態を保つための客観的な手掛かりを与えてくれます。CIビルドに組み込み、問題のあるコードを検出したら中断することもできます。通常のリントに対する主な強みは、重複の検出など複数ファイルにまたがる品質の検査、コードの複雑度などの高度な分析、問題の履歴や改善状況の追跡です。例として、[SonarQube](https://www.sonarqube.org/)（[スター](https://github.com/SonarSource/sonarqube)4,900以上）と[Code Climate](https://codeclimate.com/)（[スター](https://github.com/codeclimate/codeclimate)2,000以上）があります。
 
-Credit: <a href="https://github.com/TheHollidayInn" data-href="https://github.com/TheHollidayInn" class="markup--anchor markup--p-anchor" rel="noopener nofollow" target="_blank">[Keith Holliday](https://github.com/TheHollidayInn)</a>
-
-<br/>
-
-❌ **Otherwise:** With poor code quality, bugs and performance will always be an issue that no shiny new library or state of the art features can fix
+協力：[Keith Holliday](https://github.com/TheHollidayInn)
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** コード品質が低ければ、バグや性能の問題はつきまといます。新しいライブラリや最先端の機能でも、それを解決することはできません。
 
 <br/>
 
-### :clap: Doing It Right Example: CodeClimate, a commercial tool that can identify complex methods:
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Code%20Climate-blue.svg "Examples with CodeClimate")
+<br/>
 
-![alt text](assets/bp-16-yoni-goldberg-quality.png "CodeClimate, a commercial tool that can identify complex methods:")
+### :clap: 良い例：複雑なメソッドを検出できる商用ツール、Code Climate
+
+![CodeClimateを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Code%20Climate-blue.svg "CodeClimateを使った例")
+
+![Code Climateによる複雑なメソッドの検出](assets/bp-16-yoni-goldberg-quality.png "Code Climateは複雑なメソッドを検出できる商用ツール")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 2.6 Check your readiness for Node-related chaos
+<a id="practice-2-6"></a>
 
-:white_check_mark: **Do:** Weirdly, most software testings are about logic & data only, but some of the worst things that happen (and are really hard to mitigate) are infrastructural issues. For example, did you ever test what happens when your process memory is overloaded, or when the server/process dies, or does your monitoring system realizes when the API becomes 50% slower?. To test and mitigate these type of bad things — [Chaos engineering](https://principlesofchaos.org/) was born by Netflix. It aims to provide awareness, frameworks and tools for testing our app resiliency for chaotic issues. For example, one of its famous tools, [the chaos monkey](https://github.com/Netflix/chaosmonkey), randomly kills servers to ensure that our service can still serve users and not relying on a single server (there is also a Kubernetes version, [kube-monkey](https://github.com/asobti/kube-monkey), that kills pods). All these tools work on the hosting/platform level, but what if you wish to test and generate pure Node chaos like check how your Node process copes with uncaught errors, unhandled promise rejection, v8 memory overloaded with the max allowed of 1.7GB or whether your UX remains satisfactory when the event loop gets blocked often? to address this I’ve written, [node-chaos](https://github.com/i0natan/node-chaos-monkey) (alpha) which provides all sort of Node-related chaotic acts
+## ⚪️ 2.6 Node.js特有の障害への備えを確認する
+
+:white_check_mark: **推奨：** 不思議なことに、ソフトウェアのテストの大半はロジックとデータだけを扱います。しかし、特に深刻で対処しにくい問題の中には、インフラに起因するものがあります。プロセスのメモリが逼迫したときや、サーバー・プロセスが停止したときに何が起こるか、テストしたことはあるでしょうか。APIが50%遅くなったとき、監視システムは気付けるでしょうか。こうした問題を試し、影響を軽減するために、Netflixで[カオスエンジニアリング](https://principlesofchaos.org/)が生まれました。混乱を伴う障害に対するアプリケーションの回復力を検証するための考え方、フレームワーク、ツールを提供します。有名な[Chaos Monkey](https://github.com/Netflix/chaosmonkey)はサーバーをランダムに停止させ、単一のサーバーに依存せずにサービスを提供し続けられるかを確認します。Podを停止させるKubernetes版の[kube-monkey](https://github.com/asobti/kube-monkey)もあります。これらはホスティングやプラットフォームの層で動作しますが、Node.jsそのものの障害を起こしたい場合はどうでしょう。未捕捉のエラー、処理されていないPromiseの拒否、V8のメモリが上限の1.7GBに達した場合への対処や、イベントループが頻繁にブロックされても十分なUXを保てるか、といった確認です。そのために、著者はNode.jsに関するさまざまな障害を起こせる[node-chaos](https://github.com/i0natan/node-chaos-monkey)（アルファ版）を作りました。
 <br/>
 
-❌ **Otherwise:** No escape here, Murphy’s law will hit your production without mercy
+❌ **守らないと：** 逃れることはできません。マーフィーの法則が、本番環境を容赦なく襲います。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :clap: Doing It Right Example: : Node-chaos can generate all sort of Node.js pranks so you can test how resilience is your app to chaos
+### :clap: 良い例：node-chaosでNode.jsのさまざまな障害を起こし、アプリケーションの回復力を試す
 
-![alt text](assets/bp-17-yoni-goldberg-chaos-monkey-nodejs.png "Node-chaos can generate all sort of Node.js pranks so you can test how resilience is your app to chaos")
+![node-chaosでNode.js特有の障害を再現する](assets/bp-17-yoni-goldberg-chaos-monkey-nodejs.png "node-chaosで障害を起こし、アプリケーションの回復力を確かめる")
 
 </details>
 
 <br/>
 
-## ⚪ ️2.7 Avoid global test fixtures and seeds, add data per-test
+## ⚪️ 2.7 グローバルなフィクスチャやシードを避け、テストごとにデータを追加する
 
-:white_check_mark: **Do:** Going by the golden rule (bullet 0), each test should add and act on its own set of DB rows to prevent coupling and easily reason about the test flow. In reality, this is often violated by testers who seed the DB with data before running the tests (also known as ‘test fixture’) for the sake of performance improvement. While performance is indeed a valid concern — it can be mitigated (see “Component testing” bullet), however, test complexity is a much painful sorrow that should govern other considerations most of the time. Practically, make each test case explicitly add the DB records it needs and act only on those records. If performance becomes a critical concern — a balanced compromise might come in the form of seeding the only suite of tests that are not mutating data (e.g. queries)
+:white_check_mark: **推奨：** 第0章の黄金律に従い、各テストは専用のDBレコードを追加し、それだけを操作しましょう。テスト間の結び付きを防ぎ、流れを理解しやすくなります。実際には、性能を上げるため、テスト実行前にDBへ共通データを投入する「テストフィクスチャ」によって、この原則がよく破られています。性能は確かに重要ですが、改善する手段があります。「コンポーネントテスト」の項目も参照してください。一方、テストの複雑さはより深刻な負担なので、多くの場合はほかの事情より優先すべきです。各テストケースが必要なDBレコードを明示的に作成し、そのレコードだけを操作するようにします。性能がどうしても問題になるなら、問い合わせなど、データを変更しないテストスイートだけでシードデータを共有するのが、バランスの取れた妥協案かもしれません。
 <br/>
 
-❌ **Otherwise:** Few tests fail, a deployment is aborted, our team is going to spend precious time now, do we have a bug? let’s investigate, oh no — it seems that two tests were mutating the same seed data
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** いくつかのテストが失敗し、デプロイが中断されました。バグだろうかとチームが貴重な時間を使って調べた結果、2つのテストが同じシードデータを書き換えていただけだとわかります。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: tests are not independent and rely on some global hook to feed global DB data
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Examples with Mocha")
+<br/>
+
+### :thumbsdown: アンチパターン：テストが独立しておらず、グローバルなフックが投入する共通DBデータに依存している
+
+![Mochaを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Mocha-blue.svg "Mochaを使った例")
 
 ```javascript
 before(async () => {
@@ -948,7 +981,7 @@ it("When querying by site name, get the right site", async () => {
 
 <br/>
 
-### :clap: Doing It Right Example: We can stay within the test, each test acts on its own set of data
+### :clap: 良い例：必要なデータをテスト内で把握でき、各テストが専用のデータだけを操作する
 
 ```javascript
 it("When updating site name, get successful confirmation", async () => {
@@ -965,22 +998,22 @@ it("When updating site name, get successful confirmation", async () => {
 
 <br/>
 
-## ⚪ ️2.8 Choose a clear data clean-up strategy: After-all (recommended) or after-each
+## ⚪️ 2.8 データ削除の方針を明確にする：全テスト後（推奨）か、各テスト後か
 
-:white_check_mark: **Do:** The timing when the tests clean the database determines the way the tests are being written. The two most viable options are cleaning after all the tests vs cleaning after every single test. Choosing the latter option, cleaning after every single test guarantees clean tables and builds convenient testing perks for the developer. No other records exist when the test starts, one can have certainty which data is being queried and even might be tempted to count rows during assertions. This comes with severe downsides: When running in a multi-process mode, tests are likely to interfere with each other. While process-1 purges tables, at the very moment process-2 queries for data and fail (because the DB was suddenly deleted by process-1). On top of this, It's harder to troubleshoot failing tests - Visiting the DB will show no records.
+:white_check_mark: **推奨：** DBをいつ空にするかによって、テストの書き方が決まります。主な選択肢は、すべてのテストの終了後か、個々のテストの終了後です。各テストの終了後に削除すると、毎回テーブルが空になり、開発者にとって便利です。テスト開始時にほかのレコードが存在しないので、どのデータを問い合わせているかが確実にわかり、アサーションで行数を数えたくなるかもしれません。しかし重大な欠点があります。マルチプロセスで実行すると、テスト同士が干渉しやすいのです。プロセス1がテーブルを空にした瞬間、プロセス2がデータを問い合わせて失敗するかもしれません。また、失敗したテストを調べるときにも、DBにはすでにレコードがなく、原因を追いにくくなります。
 
-The second option is to clean up after all the test files have finished (or even daily!). This approach means that the same DB with existing records serves all the tests and processes. To avoid stepping on each other's toes, the tests must add and act on specific records that they have added. Need to check that some record was added? Assume that there are other thousands of records and query for records that were added explicitly. Need to check that a record was deleted? Can't assume an empty table, check that this specific record is not there. This technique brings few powerful gains: It works natively in multi-process mode, when a developer wishes to understand what happened - the data is there and not deleted. It also increases the chance of finding bugs because the DB is full of records and not artificially empty. [See the full comparison table here](https://github.com/testjavascript/nodejs-integration-tests-best-practices/blob/master/graphics/db-clean-options.png).
+もう1つの選択肢は、すべてのテストファイルの実行後、あるいは1日1回だけ削除することです。この方法では、既存レコードが入った同じDBを、すべてのテストとプロセスが使います。互いに干渉しないよう、各テストは自分が追加した特定のレコードだけを操作しなければなりません。レコードの追加を確認したければ、ほかにも何千件ものレコードがあると考え、自分が追加したものを明示的に検索します。削除を確認したければ、テーブル全体が空だと仮定せず、そのレコードが存在しないことを調べます。この方法には大きな利点があります。そのままマルチプロセスで実行でき、何が起きたかを調べるときもデータが残っています。DBが人工的に空にされず、多くのレコードが存在するため、バグを発見する可能性も高まります。[詳しい比較表はこちらです](https://github.com/testjavascript/nodejs-integration-tests-best-practices/blob/master/graphics/db-clean-options.png)。
 <br/>
 
-❌ **Otherwise:** Without a strategy to separate records or clean - Tests will step on each other toes; Using transactions will work only for relational DB and likely to get complicated once there are inner transactions
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** レコードを分離する、または削除する方針がなければ、テスト同士が干渉します。トランザクションを使う方法はリレーショナルDBに限られ、内部にもトランザクションがあると複雑になりがちです。
 
 <br/>
 
-### :clap: Cleaning after ALL the tests. Not neccesserily after every run. The more data we have while the tests are running - The more it resembles the production perks
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 良い例：すべてのテストの終了後に削除する。毎回削除する必要はない。テスト中のデータが多いほど、本番の条件に近付く
 
 ```javascript
   // After-all clean up (recommended)
@@ -997,20 +1030,20 @@ module.exports = async () => {
 
 <br/>
 
-## ⚪ ️2.9 Isolate the component from the world using HTTP interceptor
+## ⚪️ 2.9 HTTPインターセプターでコンポーネントを外部から隔離する
 
-:white_check_mark: **Do:** Isolate the component under test by intercepting any outgoing HTTP request and providing the desired response so the collaborator HTTP API won't get hit. Nock is a great tool for this mission as it provides a convenient syntax for defining external services behavior. Isolation is a must to prevent noise and slow performance but mostly to simulate various scenarios and responses - A good flight simulator is not about painting clear blue sky rather bringing safe storms and chaos. This is reinforced in a Microservice architecture where the focus should always be on a single component without involving the rest of the world. Though it's possible to simulate external service behavior using test doubles (mocking), it's preferable not to touch the deployed code and act on the network level to keep the tests pure black-box. The downside of isolation is not detecting when the collaborator component changes and not realizing misunderstandings between the two services - Make sure to compensate for this using a few contract or E2E tests
+:white_check_mark: **推奨：** 外向きのHTTPリクエストを捕捉し、必要な応答を返すことで、連携先のHTTP APIを実際に呼び出さずにテスト対象を隔離します。Nockは、外部サービスの振る舞いを簡潔な構文で定義できる優れたツールです。隔離は、余計な不安定要因や遅延を避けるだけでなく、さまざまな状況と応答を再現するために不可欠です。優れたフライトシミュレーターは、青空を描くだけでなく、嵐や混乱を安全に体験させてくれます。これは、ほかのサービス群を巻き込まず、1つのコンポーネントに集中すべきマイクロサービス構成で、特に重要です。テストダブル、つまりモックでも外部の振る舞いを模擬できますが、デプロイされるコードには触れず、ネットワークの層で操作するほうが、純粋なブラックボックステストを保てます。ただし隔離すると、連携先の変更やサービス間の認識違いを見落とします。少数のコントラクトテストやE2Eテストで必ず補いましょう。
 <br/>
 
-❌ **Otherwise:** Some services provide a fake version that can be deployed by the caller locally, usually using Docker - This will ease the setup and boost the performance but won't help with simulating various responses; Some services provide 'sandbox' environment, so the real service is hit but no costs or side effects are triggered - This will cut down the noise of setting up the 3rd party service but also won't allow simulating scenarios
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 呼び出し側がローカルに配置できる、通常はDockerを使った代替版を提供するサービスもあります。準備と実行速度は改善しますが、さまざまな応答の再現には役立ちません。本物のサービスを呼び出しても課金や副作用が発生しない「サンドボックス」を提供するサービスもありますが、準備の手間が減る一方で、任意のシナリオは再現できません。
 
 <br/>
 
-### :clap: Preventing network calls to externous components allows simulating scenarios and minimizing the noise
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 良い例：外部コンポーネントへの通信を止めることで、シナリオを再現し、余計な不安定要因を減らす
 
 ```javascript
 // Intercept requests for 3rd party APIs and return a predefined response 
@@ -1025,22 +1058,22 @@ beforeEach(() => {
 </details>
 <br/>
 
-## ⚪ ️2.10 Test the response schema, mostly when there are auto-generated fields
+## ⚪️ 2.10 応答のスキーマをテストする：自動生成フィールドがある場合は特に重要
 
-:white_check_mark: **Do:** When it is impossible to assert for specific data, check for mandatory field existence and types. Sometimes, the response contains important fields with dynamic data that can't be predicted when writing the test, like dates and incrementing numbers. If the API contract promises that these fields won't be null and hold the right types, it's imperative to test it. Most assertion libraries support checking types. If the response is small, check the return data and type together within the same assertion (see code example). One more option is to verify the entire response against an OpenAPI doc (Swagger). Most test runners have community extensions that validate API responses against their documentation.
+:white_check_mark: **推奨：** 具体的な値を検証できない場合は、必須フィールドの存在と型を確認しましょう。応答には日付や連番など、テストを書く時点では予測できない、動的で重要な値が含まれることがあります。APIの契約が、そのフィールドはnullではなく、正しい型であると約束しているなら、必ずテストすべきです。多くのアサーションライブラリは型の検証に対応しています。応答が小さければ、次のコード例のように、値と型を同じアサーションで確認します。OpenAPI文書（Swagger）に照らして応答全体を検証する方法もあります。多くのテストランナーには、API応答をそのドキュメントと照合するコミュニティ製の拡張機能があります。
 
-
-<br/>
-
-❌ **Otherwise:** Although the code/API caller relies on some field with dynamic data (e.g., ID, date), it will not come in return and break the contract
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 呼び出し側がIDや日付などの動的なフィールドに依存しているのに、それが応答に含まれず、契約を破ってしまうかもしれません。
 
 <br/>
 
-### :clap: Asserting that fields with dynamic value exist and have the right type
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 良い例：動的な値を持つフィールドが存在し、正しい型であることを検証する
 
 ```javascript
   test('When adding a new valid order, Then should get back approval with 200 response', async () => {
@@ -1060,22 +1093,22 @@ beforeEach(() => {
 
 <br/>
 
-## ⚪ ️2.11 Check integrations corner cases and chaos
+## ⚪️ 2.11 外部連携の境界的なケースや障害を確認する
 
-:white_check_mark: **Do:** When checking integrations, go beyond the happy and sad paths. Check not only error responses (e.g. HTTP 500 error) but also network-level anomalies like slow and timed-out responses. This will prove that the code is resilient and can handle various network scenarios like taking the right path after a timeout, has no fragile race conditions, and contains a circuit breaker for retries. Reputable interceptor tools can easily simulate various network behaviors like hectic service that occasionally fail. It can even realize when the default HTTP client timeout value is longer than the simulated response time and throw a timeout exception right away without waiting
+:white_check_mark: **推奨：** 連携を確認するときは、通常の成功パターンと失敗パターンの先まで試しましょう。HTTP 500のようなエラー応答だけでなく、応答の遅延やタイムアウトなど、ネットワーク層の異常も確認します。これにより、タイムアウト後に適切な処理へ進むこと、壊れやすい競合状態がないこと、再試行に対するサーキットブレーカーを備えていることなど、さまざまな通信状況への耐性を確認できます。実績のあるインターセプターなら、ときどき失敗する不安定なサービスなど、多様な通信の振る舞いを簡単に再現できます。HTTPクライアントの既定のタイムアウト値と再現する応答時間を考慮し、実時間を待たずに即座にタイムアウト例外を発生させることもできます。
 
-
-<br/>
-
-❌ **Otherwise:** All your tests pass, it's only the production who will crash or won't report errors correctly when 3rd parties send exceptional responses
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** テストがすべて通っているのに、外部サービスが例外的な応答を返したとき、本番だけがクラッシュしたり、エラーを正しく報告しなかったりします。
 
 <br/>
 
-### :clap: Ensuring that on network failures, the circuit breaker can save the day
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 良い例：通信障害時に、サーキットブレーカーなどの障害対策が機能することを確認する
 
 ```javascript
   test('When users service replies with 503 once and retry mechanism is applied, then an order is added successfully', async () => {
@@ -1106,42 +1139,44 @@ beforeEach(() => {
 <br/>
 
 
-## ⚪ ️2.12 Test the five potential outcomes
+## ⚪️ 2.12 起こりうる5種類の結果をテストする
 
-:white_check_mark: **Do:** When planning your tests, consider covering the five typical flow's outputs. When your test is triggering some action (e.g., API call), a reaction is happening, something meaningful occurs and calls for testing. Note that we don't care about how things work. Our focus is on outcomes, things that are noticeable from the outside and might affect the user. These outcomes/reactions can be put in 5 categories:
+:white_check_mark: **推奨：** テストを計画するときは、典型的な処理の結果を5種類に分けて検討しましょう。API呼び出しなどの操作を起こすと、何らかの意味のある反応が生じ、それがテストの対象になります。関心があるのは内部で「どう」動くかではありません。外から観測でき、ユーザーに影響しうる結果です。その結果や反応は、次の5つに分類できます。
 
-• Response - The test invokes an action (e.g., via API) and gets a response. It's now concerned with checking the response data correctness, schema, and HTTP status
+• 応答 — APIなどを通じて操作を行い、応答を受け取ります。応答データの正しさ、スキーマ、HTTPステータスを確認します。
 
-• A new state - After invoking an action, some **publicly accessible** data is probably modified
+• 新しい状態 — 操作の後に、**公開インターフェースから取得できる**データが変わることがあります。
 
-• External calls - After invoking an action, the app might call an external component via HTTP or any other transport. For example, a call to send SMS, email or charge a credit card
+• 外部呼び出し — 操作の後に、HTTPなどを通じて外部コンポーネントが呼ばれることがあります。SMSやメールの送信、クレジットカードへの課金などです。
 
-• Message queues - The outcome of a flow might be a message in a queue
+• メッセージキュー — 処理の結果が、キューに追加されたメッセージになる場合もあります。
 
-• Observability - Some things must be monitored, like errors or remarkable business events. When a transaction fails, not only we expect the right response but also correct error handling and proper logging/metrics. This information goes directly to a very important user - The ops user (i.e., production SRE/admin)
+• 可観測性（オブザーバビリティ） — エラーや重要な業務イベントなど、監視すべきものがあります。トランザクションが失敗した場合、正しい応答だけでなく、適切なエラー処理、ログ、メトリクスも必要です。この情報は、本番環境のSREや管理者という、非常に重要な利用者へ直接届きます。
 
 
 <br/><br/>
 
-# Section 3️⃣: Frontend Testing
+<a id="section-3"></a>
 
-## ⚪ ️ 3.1 Separate UI from functionality
+# 第3章：フロントエンドのテスト
 
-:white_check_mark: **Do:** When focusing on testing component logic, UI details become a noise that should be extracted, so your tests can focus on pure data. Practically, extract the desired data from the markup in an abstract way that is not too coupled to the graphic implementation, assert only on pure data (vs HTML/CSS graphic details) and disable animations that slow down. You might get tempted to avoid rendering and test only the back part of the UI (e.g. services, actions, store) but this will result in fictional tests that don't resemble the reality and won't reveal cases where the right data doesn't even arrive in the UI
+## ⚪️ 3.1 UIの見た目と機能を分離する
 
-<br/>
-
-❌ **Otherwise:** The pure calculated data of your test might be ready in 10ms, but then the whole test will last 500ms (100 tests = 1 min) due to some fancy and irrelevant animation
+:white_check_mark: **推奨：** コンポーネントのロジックをテストするとき、UIの細かな見た目は余計な情報になります。テストがデータそのものに集中できるよう切り離しましょう。具体的には、表示の実装に強く依存しない抽象的な方法でマークアップから必要なデータを取り出し、HTMLやCSSの見た目ではなく、そのデータだけを検証します。実行を遅くするアニメーションも無効にします。描画を省略し、サービス、アクション、ストアなどUIの背後にある部分だけをテストしたくなるかもしれません。しかし、それでは現実と異なるテストになり、正しいデータがそもそもUIに届いていない問題を見つけられません。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 計算結果のデータは10ミリ秒で用意できるのに、テストと関係のない凝ったアニメーションのせいで全体が500ミリ秒かかり、100件なら約1分になってしまいます。
 
 <br/>
 
-### :clap: Doing It Right Example: Separating out the UI details
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Examples with React") ![](https://img.shields.io/badge/🔧%20Example%20using%20React%20Testing%20Library-blue.svg "Examples with react-testing-library")
+<br/>
+
+### :clap: 良い例：UIの細部をテストから切り離す
+
+![Reactを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Reactを使った例") ![react-testing-libraryを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React%20Testing%20Library-blue.svg "react-testing-libraryを使った例")
 
 ```javascript
 test("When users-list is flagged to show only VIP, should display only VIP members", () => {
@@ -1160,7 +1195,7 @@ test("When users-list is flagged to show only VIP, should display only VIP membe
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: Assertion mix UI details and data
+### :thumbsdown: アンチパターン：アサーションにUIの細部とデータを混在させる
 
 ```javascript
 test("When flagging to show only VIP, should display only VIP members", () => {
@@ -1179,23 +1214,23 @@ test("When flagging to show only VIP, should display only VIP members", () => {
 
 <br/><br/>
 
-## ⚪ ️ 3.2 Query HTML elements based on attributes that are unlikely to change
+## ⚪️ 3.2 変わりにくい属性を使ってHTML要素を取得する
 
-:white_check_mark: **Do:** Query HTML elements based on attributes that are likely to survive graphic changes unlike CSS selectors and like form labels. If the designated element doesn't have such attributes, create a dedicated test attribute like 'test-id-submit-button'. Going this route not only ensures that your functional/logic tests never break because of look & feel changes but also it becomes clear to the entire team that this element and attribute are utilized by tests and shouldn't get removed
-
-<br/>
-
-❌ **Otherwise:** You want to test the login functionality that spans many components, logic and services, everything is set up perfectly - stubs, spies, Ajax calls are isolated. All seems perfect. Then the test fails because the designer changed the div CSS class from 'thick-border' to 'thin-border'
+:white_check_mark: **推奨：** CSSセレクターとは違い、見た目が変わっても維持されやすい属性、たとえばフォームのラベルを使ってHTML要素を取得しましょう。そのような属性がなければ、`test-id-submit-button`のようなテスト専用の属性を作ります。こうすれば見た目の変更で機能やロジックのテストが壊れなくなり、その要素と属性はテストで使うため削除してはいけない、ということもチーム全体に伝わります。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 多くのコンポーネント、ロジック、サービスにまたがるログイン機能をテストするとします。スタブやスパイを用意し、Ajax通信も隔離し、準備は完璧です。それなのに、デザイナーがdivのCSSクラスを`thick-border`から`thin-border`へ変えただけで、テストが失敗してしまいます。
 
 <br/>
 
-### :clap: Doing It Right Example: Querying an element using a dedicated attribute for testing
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Examples with React")
+<br/>
+
+### :clap: 良い例：テスト専用の属性で要素を取得する
+
+![Reactを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Reactを使った例")
 
 ```jsx
 // the markup code (part of React component)
@@ -1222,7 +1257,7 @@ test("Whenever no data is passed to metric, show 0 as default", () => {
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: Relying on CSS attributes
+### :thumbsdown: アンチパターン：CSSの属性に依存する
 
 ```jsx
 <!-- the markup code (part of React component) -->
@@ -1243,25 +1278,25 @@ test("Whenever no data is passed, error metric shows zero", () => {
 
 <br/>
 
-## ⚪ ️ 3.3 Whenever possible, test with a realistic and fully rendered component
+## ⚪️ 3.3 可能な限り、完全に描画したコンポーネントを使って現実に近いテストをする
 
-:white_check_mark: **Do:** Whenever reasonably sized, test your component from outside like your users do, fully render the UI, act on it and assert that the rendered UI behaves as expected. Avoid all sort of mocking, partial and shallow rendering - this approach might result in untrapped bugs due to lack of details and harden the maintenance as the tests mess with the internals (see bullet ['Favour blackbox testing'](https://github.com/goldbergyoni/javascript-testing-best-practices#-%EF%B8%8F-14-stick-to-black-box-testing-test-only-public-methods)). If one of the child components is significantly slowing down (e.g. animation) or complicating the setup - consider explicitly replacing it with a fake
+:white_check_mark: **推奨：** 規模が適切な範囲であれば、ユーザーと同じようにコンポーネントを外側からテストしましょう。UIを完全に描画し、操作し、その振る舞いが期待どおりかを確認します。モック、部分的な描画、シャローレンダリングは避けます。そうした方法では実際の構成が欠けてバグを見逃すおそれがあり、内部実装に干渉するため保守も難しくなります。[ブラックボックステストの項目](#practice-1-4)も参照してください。子コンポーネントの1つが、アニメーションなどによって大幅な遅延や複雑な準備を招く場合は、そのコンポーネントを明示的に代替物へ置き換えることを検討します。
 
-With all that said, a word of caution is in order: this technique works for small/medium components that pack a reasonable size of child components. Fully rendering a component with too many children will make it hard to reason about test failures (root cause analysis) and might get too slow. In such cases, write only a few tests against that fat parent component and more tests against its children
-
-<br/>
-
-❌ **Otherwise:** When poking into a component's internal by invoking its private methods, and checking the inner state - you would have to refactor all tests when refactoring the components implementation. Do you really have a capacity for this level of maintenance?
+ただし注意も必要です。この方法は、子コンポーネントの数が適度な、小規模から中規模のコンポーネントに適しています。子が多すぎるコンポーネントを完全に描画すると、失敗の根本原因を理解しにくくなり、実行も遅くなりがちです。その場合、大きな親コンポーネントには少数のテストだけを書き、子コンポーネント側のテストを増やしましょう。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 非公開メソッドを呼び、内部状態を確認するようなテストでは、コンポーネントの実装をリファクタリングするたびに、テストもすべて直す必要があります。それほどの保守負担を本当に引き受けられるでしょうか。
 
 <br/>
 
-### :clap: Doing It Right Example: Working realistically with a fully rendered component
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Examples with React") ![](https://img.shields.io/badge/🔧%20Example%20using%20Enzyme-blue.svg "Examples with Enzyme")
+<br/>
+
+### :clap: 良い例：完全に描画したコンポーネントを、実際の利用に近い形で操作する
+
+![Reactを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Reactを使った例") ![Enzymeを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Enzyme-blue.svg "Enzymeを使った例")
 
 ```javascript
 class Calendar extends React.Component {
@@ -1291,7 +1326,7 @@ test("Realistic approach: When clicked to show filters, filters are displayed", 
 });
 ```
 
-### :thumbsdown: Anti-Pattern Example: Mocking the reality with shallow rendering
+### :thumbsdown: アンチパターン：シャローレンダリングで実際の構成を省略する
 
 ```javascript
 test("Shallow/mocked approach: When clicked to show filters, filters are displayed", () => {
@@ -1315,23 +1350,23 @@ test("Shallow/mocked approach: When clicked to show filters, filters are display
 
 <br/>
 
-## ⚪ ️ 3.4 Don't sleep, use frameworks built-in support for async events. Also try to speed things up
+## ⚪️ 3.4 sleepを使わず、フレームワークの非同期イベント対応を使う。高速化も工夫する
 
-:white_check_mark: **Do:** In many cases, the unit under test completion time is just unknown (e.g. animation suspends element appearance) - in that case, avoid sleeping (e.g. setTimeOut) and prefer more deterministic methods that most platforms provide. Some libraries allows awaiting on operations (e.g. [Cypress cy.request('url')](https://docs.cypress.io/guides/references/best-practices.html#Unnecessary-Waiting)), other provide API for waiting like [@testing-library/dom method wait(expect(element))](https://testing-library.com/docs/guide-disappearance). Sometimes a more elegant way is to stub the slow resource, like API for example, and then once the response moment becomes deterministic the component can be explicitly re-rendered. When depending upon some external component that sleeps, it might turn useful to [hurry-up the clock](https://jestjs.io/docs/en/timer-mocks). Sleeping is a pattern to avoid because it forces your test to be slow or risky (when waiting for a too short period). Whenever sleeping and polling is inevitable and there's no support from the testing framework, some npm libraries like [wait-for-expect](https://www.npmjs.com/package/wait-for-expect) can help with a semi-deterministic solution
+:white_check_mark: **推奨：** テスト対象の処理がいつ終わるかは、わからないことがよくあります。たとえばアニメーションのために要素の出現が遅れる場合です。そんなときは`setTimeout`などで固定時間待つのではなく、多くのプラットフォームが備える、より確実な方法を選びます。[Cypressの`cy.request('url')`](https://docs.cypress.io/guides/references/best-practices.html#Unnecessary-Waiting)のように操作の完了を待てるライブラリも、[@testing-library/domの`wait(expect(element))`](https://testing-library.com/docs/guide-disappearance)のような待機APIを提供するものもあります。APIなどの遅いリソースをスタブに置き換え、応答時点を確定できるようにしてから、コンポーネントを明示的に再描画するほうが簡潔な場合もあります。待機を伴う外部コンポーネントに依存するなら、[時計を進める](https://jestjs.io/docs/en/timer-mocks)ことも有効です。固定時間の待機は、長ければ遅く、短ければ失敗する危険があるため、避けるべきパターンです。待機やポーリングが不可避で、フレームワークにも支援機能がなければ、[wait-for-expect](https://www.npmjs.com/package/wait-for-expect)などのnpmライブラリが、ある程度予測可能な解決策になります。
 <br/>
 
-❌ **Otherwise:** When sleeping for a long time, tests will be an order of magnitude slower. When trying to sleep for small numbers, test will fail when the unit under test didn't respond in a timely fashion. So it boils down to a trade-off between flakiness and bad performance
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 長く待てばテストが桁違いに遅くなり、短く待てば処理が間に合わず失敗します。結局、不安定さと遅さのどちらかを選ぶことになります。
 
 <br/>
 
-### :clap: Doing It Right Example: E2E API that resolves only when the async operations is done (Cypress)
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Using Cypress to illustrate the idea")
-![](https://img.shields.io/badge/🔧%20Example%20using%20React%20Testing%20Library-blue.svg "Examples with react-testing-library")
+<br/>
+
+### :clap: 良い例：非同期処理が完了してから解決するE2E用API（Cypress）
+
+![Cypressを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Cypressを使った例")
+![react-testing-libraryを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React%20Testing%20Library-blue.svg "react-testing-libraryを使った例")
 
 ```javascript
 // using Cypress
@@ -1340,7 +1375,7 @@ cy.wait("@products"); // wait for route to appear
 // this line will get executed only when the route is ready
 ```
 
-### :clap: Doing It Right Example: Testing library that waits for DOM elements
+### :clap: 良い例：DOM要素を待つテストライブラリ
 
 ```javascript
 // @testing-library/dom
@@ -1357,7 +1392,7 @@ test("movie title appears", async () => {
 });
 ```
 
-### :thumbsdown: Anti-Pattern Example: custom sleep code
+### :thumbsdown: アンチパターン：独自に書いたsleep処理
 
 ```javascript
 test("movie title appears", async () => {
@@ -1381,45 +1416,47 @@ test("movie title appears", async () => {
 
 <br/>
 
-## ⚪ ️ 3.5 Watch how the content is served over the network
+## ⚪️ 3.5 ネットワーク越しのコンテンツ配信を監視する
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20Google%20LightHouse-blue.svg "Examples with Lighthouse")
+![Lighthouseを使った例](https://img.shields.io/badge/🔧%20Example%20using%20Google%20LightHouse-blue.svg "Lighthouseを使った例")
 
-✅ **Do:** Apply some active monitor that ensures the page load under real network is optimized - this includes any UX concern like slow page load or un-minified bundle. The inspection tools market is no short: basic tools like [pingdom](https://www.pingdom.com/), AWS CloudWatch, [gcp StackDriver](https://cloud.google.com/monitoring/uptime-checks/) can be easily configured to watch whether the server is alive and response under a reasonable SLA. This only scratches the surface of what might get wrong, hence it's preferable to opt for tools that specialize in frontend (e.g. [lighthouse](https://developers.google.com/web/tools/lighthouse/), [pagespeed](https://developers.google.com/speed/pagespeed/insights/)) and perform richer analysis. The focus should be on symptoms, metrics that directly affect the UX, like page load time, [meaningful paint](https://scotch.io/courses/10-web-performance-audit-tips-for-your-next-billion-users-in-2018/fmp-first-meaningful-paint), [time until the page gets interactive (TTI)](https://calibreapp.com/blog/time-to-interactive/). On top of that, one may also watch for technical causes like ensuring the content is compressed, time to the first byte, optimize images, ensuring reasonable DOM size, SSL and many others. It's advisable to have these rich monitors both during development, as part of the CI and most important - 24x7 over the production's servers/CDN
-
-<br/>
-
-❌ **Otherwise:** It must be disappointing to realize that after such great care for crafting a UI, 100% functional tests passing and sophisticated bundling - the UX is horrible and slow due to CDN misconfiguration
+✅ **推奨：** 実際のネットワーク条件でページの読み込みが最適化されているか、能動的に監視しましょう。遅いページ表示や圧縮・縮小されていないバンドルなど、UXに関わる問題を含めて調べます。検査ツールには豊富な選択肢があります。[Pingdom](https://www.pingdom.com/)、AWS CloudWatch、[GCP Stackdriver](https://cloud.google.com/monitoring/uptime-checks/)などの基本的なツールなら、サーバーが稼働し、妥当なSLAの範囲内で応答するかを簡単に監視できます。ただし、それだけでは問題の一部しか見えません。[Lighthouse](https://developers.google.com/web/tools/lighthouse/)や[PageSpeed](https://developers.google.com/speed/pagespeed/insights/)など、フロントエンドに特化した詳しい分析ツールを選ぶほうがよいでしょう。着目すべきなのは、ページ読み込み時間、[意味のある内容が描画されるまでの時間](https://scotch.io/courses/10-web-performance-audit-tips-for-your-next-billion-users-in-2018/fmp-first-meaningful-paint)、[操作可能になるまでの時間（TTI）](https://calibreapp.com/blog/time-to-interactive/)など、UXに直接影響する現象や指標です。加えて、コンテンツの圧縮、最初のバイトが届くまでの時間、画像の最適化、適切なDOMサイズ、SSLなど、技術的な原因も確認できます。こうした詳しい監視は、開発中、CIの一部、そして最も重要な本番サーバーやCDNに対する24時間365日の監視として行うことを勧めます。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** UIを丁寧に作り、機能テストが100%成功し、バンドルも工夫したのに、CDNの設定ミスで遅く使いにくい画面になっていたら、がっかりするはずです。
 
-### :clap: Doing It Right Example: Lighthouse page load inspection report
+<br/>
 
-![](/assets/lighthouse2.png "Lighthouse page load inspection report")
+<details><summary>✏ <b>コード例</b></summary>
+
+### :clap: 良い例：Lighthouseによるページ読み込みの検査レポート
+
+![Lighthouseによるページ読み込みの検査レポート](/assets/lighthouse2.png "Lighthouseによるページ読み込みの検査レポート")
 
 </details>
 
 <br/>
 
-## ⚪ ️ 3.6 Stub flaky and slow resources like backend APIs
+<a id="practice-3-6"></a>
 
-:white_check_mark: **Do:** When coding your mainstream tests (not E2E tests), avoid involving any resource that is beyond your responsibility and control like backend API and use stubs instead (i.e. test double). Practically, instead of real network calls to APIs, use some test double library (like [Sinon](https://sinonjs.org/), [Test doubles](https://www.npmjs.com/package/testdouble), etc) for stubbing the API response. The main benefit is preventing flakiness - testing or staging APIs by definition are not highly stable and from time to time will fail your tests although YOUR component behaves just fine (production env was not meant for testing and it usually throttles requests). Doing this will allow simulating various API behavior that should drive your component behavior as when no data was found or the case when API throws an error. Last but not least, network calls will greatly slow down the tests
+## ⚪️ 3.6 バックエンドAPIなど、不安定で遅いリソースはスタブに置き換える
 
-<br/>
-
-❌ **Otherwise:** The average test runs no longer than few ms, a typical API call last 100ms>, this makes each test ~20x slower
+:white_check_mark: **推奨：** 通常のテスト、つまりE2E以外のテストでは、バックエンドAPIなど、自分の責任や制御が及ばないリソースを巻き込まず、スタブなどのテストダブルに置き換えましょう。実際にAPIへ通信する代わりに、[Sinon](https://sinonjs.org/)や[testdouble](https://www.npmjs.com/package/testdouble)などで応答をスタブ化します。最大の利点は、不安定さを防げることです。テスト環境やステージングのAPIは必ずしも安定しておらず、自分のコンポーネントが正しくても、ときどきテストを失敗させます。本番環境はテスト用途ではなく、通常はリクエスト数も制限されます。スタブなら、データが見つからない場合やAPIがエラーを返す場合など、コンポーネントの振る舞いに影響するさまざまな状況も再現できます。さらに、ネットワーク通信による大幅な遅延も防げます。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 通常は数ミリ秒で済むテストでも、100ミリ秒以上かかる一般的なAPI呼び出しによって、約20倍遅くなってしまいます。
 
 <br/>
 
-### :clap: Doing It Right Example: Stubbing or intercepting API calls
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Examples with React") ![](https://img.shields.io/badge/🔧%20Example%20using%20React%20Testing%20Library-blue.svg "Examples with react-testing-library")
+<br/>
+
+### :clap: 良い例：API呼び出しをスタブ化、またはインターセプトする
+
+![Reactを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React-blue.svg "Reactを使った例") ![react-testing-libraryを使った例](https://img.shields.io/badge/🔧%20Example%20using%20React%20Testing%20Library-blue.svg "react-testing-libraryを使った例")
 
 ```javascript
 // unit under test
@@ -1457,33 +1494,33 @@ test("When no products exist, show the appropriate message", () => {
 
 <br/>
 
-## ⚪ ️ 3.7 Have very few end-to-end tests that spans the whole system
+## ⚪️ 3.7 システム全体を通すE2Eテストは、ごく少数に絞る
 
-:white_check_mark: **Do:** Although E2E (end-to-end) usually means UI-only testing with a real browser (See [bullet 3.6](https://github.com/goldbergyoni/javascript-testing-best-practices#-%EF%B8%8F-36-stub-flaky-and-slow-resources-like-backend-apis)), for other they mean tests that stretch the entire system including the real backend. The latter type of tests is highly valuable as they cover integration bugs between frontend and backend that might happen due to a wrong understanding of the exchange schema. They are also an efficient method to discover backend-to-backend integration issues (e.g. Microservice A sends the wrong message to Microservice B) and even to detect deployment failures - there are no backend frameworks for E2E testing that are as friendly and mature as UI frameworks like [Cypress](https://www.cypress.io/) and [Puppeteer](https://github.com/GoogleChrome/puppeteer). The downside of such tests is the high cost of configuring an environment with so many components, and mostly their brittleness - given 50 microservices, even if one fails then the entire E2E just failed. For that reason, we should use this technique sparingly and probably have 1-10 of those and no more. That said, even a small number of E2E tests are likely to catch the type of issues they are targeted for - deployment & integration faults. It's advisable to run those over a production-like staging environment
-
-<br/>
-
-❌ **Otherwise:** UI might invest much in testing its functionality only to realizes very late that the backend returned payload (the data schema the UI has to work with) is very different than expected
+:white_check_mark: **推奨：** E2E（エンドツーエンド）という言葉は、実ブラウザーを使ったUIだけのテストを指すこともあれば（[3.6参照](#practice-3-6)）、実際のバックエンドまで含めたシステム全体のテストを指すこともあります。後者は非常に有益です。データのスキーマに対する認識の違いによって起こる、フロントエンドとバックエンド間の連携バグを確認できます。マイクロサービスAがBに誤ったメッセージを送るようなバックエンド同士の連携問題や、デプロイの失敗を検出するにも有効です。バックエンドには、[Cypress](https://www.cypress.io/)や[Puppeteer](https://github.com/GoogleChrome/puppeteer)ほど使いやすく成熟したE2E向けのUIフレームワークに相当するものがありません。一方、多数のコンポーネントを備える環境の構築は高くつき、何よりテストが壊れやすくなります。50個のマイクロサービスのうち1つが失敗しただけで、E2E全体も失敗します。そのため、この手法は控えめに使い、1〜10件ほどにとどめるのがよいでしょう。少数でも、狙いとするデプロイや連携の不具合は検出できます。本番に近いステージング環境での実行を勧めます。
 
 <br/>
 
-## ⚪ ️ 3.8 Speed-up E2E tests by reusing login credentials
-
-:white_check_mark: **Do:** In E2E tests that involve a real backend and rely on a valid user token for API calls, it doesn't payoff to isolate the test to a level where a user is created and logged-in in every request. Instead, login only once before the tests execution start (i.e. before-all hook), save the token in some local storage and reuse it across requests. This seem to violate one of the core testing principle - keep the test autonomous without resources coupling. While this is a valid worry, in E2E tests performance is a key concern and creating 1-3 API requests before starting each individual tests might lead to horrible execution time. Reusing credentials doesn't mean the tests have to act on the same user records - if relying on user records (e.g. test user payments history) than make sure to generate those records as part of the test and avoid sharing their existence with other tests. Also remember that the backend can be faked - if your tests are focused on the frontend it might be better to isolate it and stub the backend API (see [bullet 3.6](https://github.com/goldbergyoni/javascript-testing-best-practices#-%EF%B8%8F-36-stub-flaky-and-slow-resources-like-backend-apis)).
+❌ **守らないと：** UIの機能テストに力を注いでも、実際にバックエンドが返すペイロード、つまりUIが扱うデータのスキーマが想定と大きく違うことに、最後まで気付けないかもしれません。
 
 <br/>
 
-❌ **Otherwise:** Given 200 test cases and assuming login=100ms = 20 seconds only for logging-in again and again
+## ⚪️ 3.8 ログイン情報を再利用してE2Eテストを高速化する
+
+:white_check_mark: **推奨：** 実際のバックエンドを使い、API呼び出しに有効なユーザートークンが必要なE2Eテストでは、リクエストごとにユーザーを作り、ログインするほど厳密に分離しても、費用に見合いません。代わりに、全テスト開始前のフック（before-all）で一度だけログインし、トークンをローカルの保存先に保持して、各リクエストで再利用します。これは「テストはリソースを共有せず、独立させる」という基本原則に反するように見えます。その懸念はもっともですが、E2Eでは性能が重要で、各テスト前に1〜3回のAPIリクエストを追加すると、実行時間が非常に長くなりえます。認証情報を再利用しても、同じユーザーデータを操作する必要はありません。支払い履歴などのデータに依存する場合は、各テストでそのデータを作り、他のテストと共有しないようにします。バックエンド自体を代替できることも忘れないでください。フロントエンドだけを確認するなら、隔離してAPIをスタブ化するほうが適切かもしれません（[3.6参照](#practice-3-6)）。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 200件のテストで、ログインに100ミリ秒ずつかかるとすれば、同じログインの繰り返しだけで20秒を費やします。
 
 <br/>
 
-### :clap: Doing It Right Example: Logging-in before-all and not before-each
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Using Cypress to illustrate the idea")
+<br/>
+
+### :clap: 良い例：各テスト前（before-each）ではなく、全テスト前（before-all）にログインする
+
+![Cypressを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Cypressを使った例")
 
 ```javascript
 let authenticationToken;
@@ -1514,23 +1551,23 @@ beforeEach(setUser => {
 
 <br/>
 
-## ⚪ ️ 3.9 Have one E2E smoke test that just travels across the site map
+## ⚪️ 3.9 サイト全体を巡回するE2Eスモークテストを1つ用意する
 
-:white_check_mark: **Do:** For production monitoring and development-time sanity check, run a single E2E test that visits all/most of the site pages and ensures no one breaks. This type of test brings a great return on investment as it's very easy to write and maintain, but it can detect any kind of failure including functional, network and deployment issues. Other styles of smoke and sanity checking are not as reliable and exhaustive - some ops teams just ping the home page (production) or developers who run many integration tests which don't discover packaging and browser issues. Goes without saying that the smoke test doesn't replace functional tests rather just aim to serve as a quick smoke detector
-
-<br/>
-
-❌ **Otherwise:** Everything might seem perfect, all tests pass, production health-check is also positive but the Payment component had some packaging issue and only the /Payment route is not rendering
+:white_check_mark: **推奨：** 本番監視と開発中の簡単な動作確認のために、サイトのすべて、または大半のページを訪問し、壊れていないことを確かめるE2Eテストを1つ用意しましょう。書くのも保守するのも簡単な一方、機能、ネットワーク、デプロイなど幅広い失敗を見つけられるため、費用対効果に優れます。ほかのスモークテストや簡易確認は、これほど確実で網羅的ではありません。たとえば運用チームが本番のトップページだけに疎通確認をしたり、開発者が統合テストを多数実行しても、パッケージングやブラウザーの問題を発見できなかったりします。もちろん、スモークテストは機能テストの代わりではなく、異常を素早く知らせる火災報知器の役目です。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 全テストが成功し、本番のヘルスチェックも正常なのに、決済コンポーネントのパッケージングに問題があって、`/Payment`だけ表示できないかもしれません。
 
 <br/>
 
-### :clap: Doing It Right Example: Smoke travelling across all pages
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Using Cypress to illustrate the idea")
+<br/>
+
+### :clap: 良い例：すべてのページを巡回するスモークテスト
+
+![Cypressを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Cypressを使った例")
 
 ```javascript
 it("When doing smoke testing over all page, should load them all successfully", () => {
@@ -1549,21 +1586,21 @@ it("When doing smoke testing over all page, should load them all successfully", 
 
 <br/>
 
-## ⚪ ️ 3.10 Expose the tests as a live collaborative document
+## ⚪️ 3.10 テストを、共同で使える生きたドキュメントとして公開する
 
-:white_check_mark: **Do:** Besides increasing app reliability, tests bring another attractive opportunity to the table - serve as live app documentation. Since tests inherently speak at a less-technical and product/UX language, using the right tools they can serve as a communication artifact that greatly aligns all the peers - developers and their customers. For example, some frameworks allow expressing the flow and expectations (i.e. tests plan) using a human-readable language so any stakeholder, including product managers, can read, approve and collaborate on the tests which just became the live requirements document. This technique is also being referred to as 'acceptance test' as it allows the customer to define his acceptance criteria in plain language. This is [BDD (behavior-driven testing)](https://en.wikipedia.org/wiki/Behavior-driven_development) at its purest form. One of the popular frameworks that enable this is [Cucumber which has a JavaScript flavor](https://github.com/cucumber/cucumber-js), see example below. Another similar yet different opportunity, [StoryBook](https://storybook.js.org/), allows exposing UI components as a graphic catalog where one can walk through the various states of each component (e.g. render a grid w/o filters, render that grid with multiple rows or with none, etc), see how it looks like, and how to trigger that state - this can appeal also to product folks but mostly serves as live doc for developers who consume those components.
+:white_check_mark: **推奨：** テストには、信頼性を高めるだけでなく、アプリケーションの生きたドキュメントになるという魅力もあります。テストは技術の細部よりもプロダクトやUXの言葉で表されるため、適切なツールを使えば、開発者と顧客の認識をそろえるコミュニケーション手段になります。たとえば、処理の流れと期待する結果、つまりテスト計画を、人間が読みやすい言葉で記述できるフレームワークがあります。プロダクトマネージャーを含む関係者が読み、承認し、共同で更新できるようになれば、テストは生きた要件書になります。顧客が平易な言葉で受け入れ条件を定められるため、この手法は「受け入れテスト」とも呼ばれます。[BDD（振る舞い駆動開発）](https://en.wikipedia.org/wiki/Behavior-driven_development)を純粋な形で実践する方法です。代表的なフレームワークに、[JavaScript版もあるCucumber](https://github.com/cucumber/cucumber-js)があります。下の例を参照してください。似ていますが別の方法として、[Storybook](https://storybook.js.org/)ならUIコンポーネントを視覚的なカタログとして公開できます。フィルターのない表、複数行のある表、空の表など、各コンポーネントの状態を巡り、見た目とその状態の作り方を確認できます。プロダクト担当者にも役立ちますが、主にはコンポーネントを利用する開発者向けの、生きたドキュメントになります。
 
-❌ **Otherwise:** After investing top resources on testing, it's just a pity not to leverage this investment and win great value
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** テストに多くの資源を投入したのに、その投資からさらに大きな価値を引き出せないのは、もったいないことです。
 
 <br/>
 
-### :clap: Doing It Right Example: Describing tests in human-language using cucumber-js
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Cucumber-blue.svg "Examples using Cucumber")
+<br/>
+
+### :clap: 良い例：cucumber-jsで、人間の言葉に近いテストを記述する
+
+![Cucumberを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Cucumber-blue.svg "Cucumberを使った例")
 
 ```text
 This is how one can describe tests using cucumber: plain language that allows anyone to understand and collaborate
@@ -1581,39 +1618,39 @@ Feature: Twitter new tweet
     Then I see message "Tweet saved"
 ```
 
-### :clap: Doing It Right Example: Visualizing our components, their various states and inputs using Storybook
+### :clap: 良い例：Storybookでコンポーネントの状態や入力を可視化する
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20StoryBook-blue.svg "Using StoryBook")
+![StoryBookを使った例](https://img.shields.io/badge/🔨%20Example%20using%20StoryBook-blue.svg "StoryBookを使った例")
 
-![alt text](assets/story-book.jpg "Storybook")
+![Storybookによるコンポーネントのカタログ](assets/story-book.jpg "Storybook")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 3.11 Detect visual issues with automated tools
+## ⚪️ 3.11 自動化ツールで見た目の不具合を検出する
 
-:white_check_mark: **Do:** Setup automated tools to capture UI screenshots when changes are presented and detect visual issues like content overlapping or breaking. This ensures that not only the right data is prepared but also the user can conveniently see it. This technique is not widely adopted, our testing mindset leans toward functional tests but it's the visuals what the user experience and with so many device types it's very easy to overlook some nasty UI bug. Some free tools can provide the basics - generate and save screenshots for the inspection of human eyes. While this approach might be sufficient for small apps, it's flawed as any other manual testing that demands human labor anytime something changes. On the other hand, it's quite challenging to detect UI issues automatically due to the lack of clear definition - this is where the field of 'Visual Regression' chime in and solve this puzzle by comparing old UI with the latest changes and detect differences. Some OSS/free tools can provide some of this functionality (e.g. [wraith](https://github.com/BBC-News/wraith), [PhantomCSS](<[https://github.com/HuddleEng/PhantomCSS](https://github.com/HuddleEng/PhantomCSS)>) but might charge significant setup time. The commercial line of tools (e.g. [Applitools](https://applitools.com/), [Percy.io](https://percy.io/)) takes is a step further by smoothing the installation and packing advanced features like management UI, alerting, smart capturing by eliminating 'visual noise' (e.g. ads, animations) and even root cause analysis of the DOM/CSS changes that led to the issue
-
-<br/>
-
-❌ **Otherwise:** How good is a content page that display great content (100% tests passed), loads instantly but half of the content area is hidden?
+:white_check_mark: **推奨：** 変更時にUIのスクリーンショットを撮り、内容の重なりや表示崩れを検出する自動化ツールを設定しましょう。正しいデータが用意されているだけでなく、ユーザーに見やすく表示されていることも確認できます。この手法はまだ広く普及していません。テストというと機能を重視しがちですが、ユーザーが実際に体験するのは見た目です。端末の種類も多く、厄介なUIバグは簡単に見落とされます。無料ツールでも、スクリーンショットを生成・保存し、人が目視確認するための基本機能を備えたものがあります。小さなアプリケーションなら十分かもしれませんが、変更のたびに人手が必要という、手動テスト共通の弱点があります。一方、何を不具合とするかの明確な定義がないため、UIの問題を自動検出するのは困難です。そこで役立つのが「ビジュアルリグレッション」です。以前のUIと最新の変更を比較して差分を検出します。[Wraith](https://github.com/BBC-News/wraith)や[PhantomCSS](https://github.com/HuddleEng/PhantomCSS)など、OSSや無料のツールでも一部の機能を提供していますが、設定に相当の時間がかかる場合があります。[Applitools](https://applitools.com/)や[Percy.io](https://percy.io/)などの商用ツールは、導入を簡単にし、管理UI、通知、広告やアニメーションなどの「視覚的ノイズ」を除去した撮影、原因となったDOM・CSS変更の分析といった高度な機能も備えています。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** テストが100%成功し、すばやく読み込めて、内容も素晴らしいページでも、その半分が隠れて見えなければ、どれほど役立つでしょうか。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: A typical visual regression - right content that is served badly
-
-![alt text](assets/amazon-visual-regression.jpeg "Amazon page breaks")
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :clap: Doing It Right Example: Configuring wraith to capture and compare UI snapshots
+### :thumbsdown: アンチパターン：内容は正しいのに表示が崩れている、典型的なビジュアルリグレッション
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Wraith-blue.svg "Using Wraith")
+![表示が崩れたAmazonのページ](assets/amazon-visual-regression.jpeg "Amazonのページの表示崩れ")
+
+<br/>
+
+### :clap: 良い例：WraithでUIのスナップショットを撮影・比較する
+
+![Wraithを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Wraith-blue.svg "Wraithを使った例")
 
 ```
 ​# Add as many domains as necessary. Key will act as a label​
@@ -1640,9 +1677,9 @@ paths:
     path: /subscribe
 ```
 
-### :clap: Doing It Right Example: Using Applitools to get snapshot comparison and other advanced features
+### :clap: 良い例：Applitoolsでスナップショットの比較と高度な機能を利用する
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20AppliTools-blue.svg "Using Applitools") ![](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Using Cypress to illustrate the idea")
+![Applitoolsを使った例](https://img.shields.io/badge/🔨%20Example%20using%20AppliTools-blue.svg "Applitoolsを使った例") ![Cypressを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Cypress-blue.svg "Cypressを使った例")
 
 ```javascript
 import * as todoPage from "../page-objects/todo-page";
@@ -1667,89 +1704,91 @@ describe("visual validation", () => {
 
 <br/><br/>
 
-# Section 4️⃣: Measuring Test Effectiveness
+<a id="section-4"></a>
+
+# 第4章：テストの有効性を測る
 
 <br/><br/>
 
-## ⚪ ️ 4.1 Get enough coverage for being confident, ~80% seems to be the lucky number
+## ⚪️ 4.1 安心して変更できるだけのカバレッジを確保する：80%程度が目安
 
-:white_check_mark: **Do:** The purpose of testing is to get enough confidence for moving fast, obviously the more code is tested the more confident the team can be. Coverage is a measure of how many code lines (and branches, statements, etc) are being reached by the tests. So how much is enough? 10–30% is obviously too low to get any sense about the build correctness, on the other side 100% is very expensive and might shift your focus from the critical paths to the exotic corners of the code. The long answer is that it depends on many factors like the type of application — if you’re building the next generation of Airbus A380 than 100% is a must, for a cartoon pictures website 50% might be too much. Although most of the testing enthusiasts claim that the right coverage threshold is contextual, most of them also mention the number 80% as a thumb of a rule ([Fowler: “in the upper 80s or 90s”](https://martinfowler.com/bliki/TestCoverage.html)) that presumably should satisfy most of the applications.
+:white_check_mark: **推奨：** テストの目的は、安心して素早く変更できるようにすることです。テストされているコードが多いほど、チームの安心感も増します。カバレッジは、テストがコードの何行、あるいは分岐や文のどれだけを通ったかを示します。では、どこまであれば十分でしょうか。10〜30%ではビルドの正しさを判断するには明らかに低すぎます。一方、100%を目指すと費用がかかり、重要な経路よりも、めったに使わない隅のコードに注意が向きかねません。正確には、アプリケーションの種類など多くの条件によります。次世代のAirbus A380を作るなら100%は必須ですが、漫画の画像を表示するサイトなら50%でも多すぎるかもしれません。適切な基準は状況次第だとするテストの専門家も、多くは80%を大まかな目安として挙げています。多くのアプリケーションに適した水準と考えられているためです（[Fowlerは「80%台後半から90%台」としています](https://martinfowler.com/bliki/TestCoverage.html)）。
 
-Implementation tips: You may want to configure your continuous integration (CI) to have a coverage threshold ([Jest link](https://jestjs.io/docs/en/configuration.html#collectcoverage-boolean)) and stop a build that doesn’t stand to this standard (it’s also possible to configure threshold per component, see code example below). On top of this, consider detecting build coverage decrease (when a newly committed code has less coverage) — this will push developers raising or at least preserving the amount of tested code. All that said, coverage is only one measure, a quantitative based one, that is not enough to tell the robustness of your testing. And it can also be fooled as illustrated in the next bullets
-
-<br/>
-
-❌ **Otherwise:** Confidence and numbers go hand in hand, without really knowing that you tested most of the system — there will also be some fear and fear will slow you down
+実装のヒント：CIでカバレッジの下限を設定し、基準を満たさないビルドを止められます（[Jestの設定](https://jestjs.io/docs/en/configuration.html#collectcoverage-boolean)）。コンポーネントごとの下限も設定できます。下の例を参照してください。さらに、新しいコミットでカバレッジが下がったことを検出すると、開発者がテスト済みのコードを増やす、少なくとも減らさないようにする動機になります。ただし、カバレッジは量を測る指標の1つにすぎず、テストの確かさを判断するには不十分です。次の項目で示すように、見かけ上の数値を高くすることもできます。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 安心感を得るには、裏付けとなる数値も必要です。システムの大半をテストしたと確認できなければ、不安が残り、変更の速度が落ちます。
 
 <br/>
 
-### :clap: Example: A typical coverage report
-
-![alt text](assets/bp-18-yoni-goldberg-code-coverage.png "A typical coverage report")
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :clap: Doing It Right Example: Setting up coverage per component (using Jest)
+### :clap: 例：一般的なカバレッジレポート
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Jest-blue.svg "Using Jest")
+![一般的なカバレッジレポート](assets/bp-18-yoni-goldberg-code-coverage.png "一般的なカバレッジレポート")
 
-![alt text](assets/bp-18-code-coverage2.jpeg "Setting up coverage per component (using Jest)")
+<br/>
+
+### :clap: 良い例：Jestでコンポーネントごとにカバレッジを設定する
+
+![Jestを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Jest-blue.svg "Jestを使った例")
+
+![Jestでコンポーネントごとにカバレッジを設定する](assets/bp-18-code-coverage2.jpeg "Jestのコンポーネント別カバレッジ設定")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 4.2 Inspect coverage reports to detect untested areas and other oddities
+## ⚪️ 4.2 カバレッジレポートで未テストの箇所や不自然な挙動を探す
 
-:white_check_mark: **Do:** Some issues sneak just under the radar and are really hard to find using traditional tools. These are not really bugs but more of surprising application behavior that might have a severe impact. For example, often some code areas are never or rarely being invoked — you thought that the ‘PricingCalculator’ class is always setting the product price but it turns out it is actually never invoked although we have 10000 products in DB and many sales… Code coverage reports help you realize whether the application behaves the way you believe it does. Other than that, it can also highlight which types of code is not tested — being informed that 80% of the code is tested doesn’t tell whether the critical parts are covered. Generating reports is easy — just run your app in production or during testing with coverage tracking and then see colorful reports that highlight how frequent each code area is invoked. If you take your time to glimpse into this data — you might find some gotchas
+:white_check_mark: **推奨：** 一般的なツールでは見つけにくく、気付かないうちに入り込む問題があります。明確なバグというより、深刻な影響を及ぼしかねない予想外の振る舞いです。たとえば、まったく、またはほとんど呼ばれていないコードがあるかもしれません。商品価格は常に`PricingCalculator`が設定していると思っていたのに、DBに1万件の商品があり、売上も多数あるにもかかわらず、一度も呼ばれていなかった、といったケースです。カバレッジレポートは、アプリケーションが想定どおりに動いているかを確かめる手掛かりになります。どんな種類のコードがテストされていないかもわかります。80%がテスト済みと聞くだけでは、重要な箇所が含まれるかはわかりません。レポートの生成は簡単です。本番またはテストでカバレッジを記録しながらアプリケーションを動かし、各箇所がどれくらい呼ばれたかを色分けしたレポートを見ます。時間を取って眺めると、思わぬ問題が見つかるかもしれません。
 <br/>
 
-❌ **Otherwise:** If you don’t know which parts of your code are left un-tested, you don’t know where the issues might come from
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** どこが未テストかわからなければ、どこから問題が起こりそうかもわかりません。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: What’s wrong with this coverage report?
+<details><summary>✏ <b>コード例</b></summary>
 
-Based on a real-world scenario where we tracked our application usage in QA and find out interesting login patterns (Hint: the amount of login failures is non-proportional, something is clearly wrong. Finally it turned out that some frontend bug keeps hitting the backend login API)
+<br/>
 
-![alt text](assets/bp-19-coverage-yoni-goldberg-nodejs-consultant.png "What’s wrong with this coverage report?")
+### :thumbsdown: アンチパターン：このカバレッジレポートのどこがおかしいか
+
+QA環境でアプリケーションの利用状況を記録し、気になるログインの傾向を見つけた実例です。ヒントは、ログイン失敗の件数が不自然に多いことです。調査の結果、フロントエンドのバグが、バックエンドのログインAPIを繰り返し呼んでいたとわかりました。
+
+![不自然に多いログイン失敗を示すカバレッジレポート](assets/bp-19-coverage-yoni-goldberg-nodejs-consultant.png "このカバレッジレポートのどこがおかしいか")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 4.3 Measure logical coverage using mutation testing
+## ⚪️ 4.3 ミューテーションテストでロジックの検証範囲を測る
 
-:white_check_mark: **Do:** The Traditional Coverage metric often lies: It may show you 100% code coverage, but none of your functions, even not one, return the right response. How come? it simply measures over which lines of code the test visited, but it doesn’t check if the tests actually tested anything — asserted for the right response. Like someone who’s traveling for business and showing his passport stamps — this doesn’t prove any work done, only that he visited few airports and hotels.
+:white_check_mark: **推奨：** 従来のカバレッジ指標は、実態を表さないことがあります。カバレッジが100%でも、正しい応答を返す関数が1つもない、という状態がありえます。なぜでしょうか。測っているのはテストが通過したコード行であり、正しい応答をアサーションで確かめたかどうかではないからです。出張した人がパスポートのスタンプを見せても、仕事をした証明にはなりません。いくつかの空港とホテルを訪れたことがわかるだけです。
 
-Mutation-based testing is here to help by measuring the amount of code that was actually TESTED not just VISITED. [Stryker](https://stryker-mutator.io/) is a JavaScript library for mutation testing and the implementation is really neat:
+ミューテーションテストは、単に「通過した」コードではなく、実際に「検証した」コードの量を測ります。JavaScript用ライブラリの[Stryker](https://stryker-mutator.io/)は、次のように動きます。
 
-(1) it intentionally changes the code and “plants bugs”. For example the code newOrder.price===0 becomes newOrder.price!=0. This “bugs” are called mutations
+(1) 意図的にコードを変え、「バグを埋め込み」ます。たとえば`newOrder.price===0`を`newOrder.price!=0`に変えます。この変更をミューテーションと呼びます。
 
-(2) it runs the tests, if all succeed then we have a problem — the tests didn’t serve their purpose of discovering bugs, the mutations are so-called survived. If the tests failed, then great, the mutations were killed.
+(2) テストを実行します。すべて成功したら問題です。テストがバグを発見できておらず、このミューテーションは「生き残った」と呼ばれます。テストが失敗したら、狙いどおりです。ミューテーションを「検出した（killした）」ことになります。
 
-Knowing that all or most of the mutations were killed gives much higher confidence than traditional coverage and the setup time is similar
+すべて、または大半のミューテーションを検出できたとわかれば、通常のカバレッジよりも強い裏付けになります。導入にかかる時間は同程度です。
 <br/>
 
-❌ **Otherwise:** You’ll be fooled to believe that 85% coverage means your test will detect bugs in 85% of your code
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** カバレッジ85%なら、コードの85%にあるバグを検出できると思い込んでしまいます。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: 100% coverage, 0% testing
+<details><summary>✏ <b>コード例</b></summary>
 
-![](https://img.shields.io/badge/🔨%20Example%20using%20Stryker-blue.svg "Using Stryker")
+<br/>
+
+### :thumbsdown: アンチパターン：カバレッジ100%、検証0%
+
+![Strykerを使った例](https://img.shields.io/badge/🔨%20Example%20using%20Stryker-blue.svg "Strykerを使った例")
 
 ```javascript
 function addNewOrder(newOrder) {
@@ -1767,28 +1806,28 @@ it("Test addNewOrder, don't use such test names", () => {
 
 <br/>
 
-### :clap: Doing It Right Example: Stryker reports, a tool for mutation testing, detects and counts the amount of code that is not tested (Mutations)
+### :clap: 良い例：Strykerのレポートで、検出されなかったミューテーションを数え、実際には検証されていないコードを見つける
 
-![alt text](assets/bp-20-yoni-goldberg-mutation-testing.jpeg "Stryker reports, a tool for mutation testing, detects and counts the amount of code that is not tested (Mutations)")
+![Strykerによるミューテーションテストのレポート](assets/bp-20-yoni-goldberg-mutation-testing.jpeg "検出されなかったミューテーションから、未検証のコードを見つける")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️4.4 Preventing test code issues with Test linters
+## ⚪️ 4.4 テスト専用のリンターで、テストコードの問題を防ぐ
 
-:white_check_mark: **Do:** A set of ESLint plugins were built specifically for inspecting the tests code patterns and discover issues. For example, [eslint-plugin-mocha](https://www.npmjs.com/package/eslint-plugin-mocha) will warn when a test is written at the global level (not a son of a describe() statement) or when tests are [skipped](https://mochajs.org/#inclusive-tests) which might lead to a false belief that all tests are passing. Similarly, [eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest) can, for example, warn when a test has no assertions at all (not checking anything)
-
-<br/>
-
-❌ **Otherwise:** Seeing 90% code coverage and 100% green tests will make your face wear a big smile only until you realize that many tests aren’t asserting for anything and many test suites were just skipped. Hopefully, you didn’t deploy anything based on this false observation
-
-<br/>
-<details><summary>✏ <b>Code Examples</b></summary>
+:white_check_mark: **推奨：** テストコードのパターンを検査し、問題を発見するためのESLintプラグインがあります。たとえば[eslint-plugin-mocha](https://www.npmjs.com/package/eslint-plugin-mocha)は、`describe()`の中ではなくグローバルにテストを書いた場合や、テストが[スキップされている](https://mochajs.org/#inclusive-tests)場合に警告します。スキップされたテストがあると、すべて成功したと誤解しかねません。同様に[eslint-plugin-jest](https://github.com/jest-community/eslint-plugin-jest)は、アサーションが1つもなく、何も確かめていないテストなどを警告できます。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: A test case full of errors, luckily all are caught by Linters
+❌ **守らないと：** カバレッジ90%、テスト成功率100%を見て喜んだ後で、多くのテストにアサーションがなく、スイートもいくつもスキップされていたと気付くかもしれません。その誤った判断で、すでにデプロイしていなければよいのですが。
+
+<br/>
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :thumbsdown: アンチパターン：問題だらけのテストケース。幸い、リンターですべて検出できる
 
 ```javascript
 describe("Too short description", () => {
@@ -1808,47 +1847,49 @@ it("Test name", () => {// *error:no-identical-title. Assign unique titles to tes
 
 <br/><br/>
 
-# Section 5️⃣: CI and Other Quality Measures
+<a id="section-5"></a>
+
+# 第5章：CIと、そのほかの品質対策
 
 <br/><br/>
 
-## ⚪ ️ 5.1 Enrich your linters and abort builds that have linting issues
+## ⚪️ 5.1 リンターを充実させ、問題があればビルドを止める
 
-:white_check_mark: **Do:** Linters are a free lunch, with 5 min setup you get for free an auto-pilot guarding your code and catching significant issue as you type. Gone are the days where linting was about cosmetics (no semi-colons!). Nowadays, Linters can catch severe issues like errors that are not thrown correctly and losing information. On top of your basic set of rules (like [ESLint standard](https://www.npmjs.com/package/eslint-plugin-standard) or [Airbnb style](https://www.npmjs.com/package/eslint-config-airbnb)), consider including some specializing Linters like [eslint-plugin-chai-expect](https://www.npmjs.com/package/eslint-plugin-chai-expect) that can discover tests without assertions, [eslint-plugin-promise](https://www.npmjs.com/package/eslint-plugin-promise?activeTab=readme) can discover promises with no resolve (your code will never continue), [eslint-plugin-security](https://www.npmjs.com/package/eslint-plugin-security?activeTab=readme) which can discover eager regex expressions that might get used for DOS attacks, and [eslint-plugin-you-dont-need-lodash-underscore](https://www.npmjs.com/package/eslint-plugin-you-dont-need-lodash-underscore) is capable of alarming when the code uses utility library methods that are part of the V8 core methods like Lodash.\_map(…)
+:white_check_mark: **推奨：** リンターは少しの手間で多くの効果を得られます。5分ほど設定するだけで、入力中のコードを監視し、重大な問題を見つけてくれます。セミコロンの有無など、見た目だけを検査していた時代は終わりました。正しくないエラーの投げ方や、それによる情報の消失も検出できます。[ESLint standard](https://www.npmjs.com/package/eslint-plugin-standard)や[Airbnbスタイル](https://www.npmjs.com/package/eslint-config-airbnb)などの基本ルールに加え、専用のリンターも検討しましょう。[eslint-plugin-chai-expect](https://www.npmjs.com/package/eslint-plugin-chai-expect)はアサーションのないテストを、[eslint-plugin-promise](https://www.npmjs.com/package/eslint-plugin-promise?activeTab=readme)はresolveされず処理が進まないPromiseを検出できます。[eslint-plugin-security](https://www.npmjs.com/package/eslint-plugin-security?activeTab=readme)はDoS攻撃に悪用されうる正規表現を検出します。[eslint-plugin-you-dont-need-lodash-underscore](https://www.npmjs.com/package/eslint-plugin-you-dont-need-lodash-underscore)は、V8の標準機能で代替できるLodashのmapなどを使っていると警告してくれます。
 <br/>
 
-❌ **Otherwise:** Consider a rainy day where your production keeps crashing but the logs don’t display the error stack trace. What happened? Your code mistakenly threw a non-error object and the stack trace was lost, a good reason for banging your head against a brick wall. A 5 min linter setup could detect this TYPO and save your day
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 本番でクラッシュが続くのに、ログにはスタックトレースがありません。原因は、誤ってErrorではないオブジェクトをthrowしていたことでした。頭を抱えたくなる状況ですが、5分のリンター設定で、この書き間違いを見つけられたかもしれません。
 
 <br/>
 
-### :thumbsdown: Anti-Pattern Example: The wrong Error object is thrown mistakenly, no stack-trace will appear for this error. Luckily, ESLint catches the next production bug
+<details><summary>✏ <b>コード例</b></summary>
 
-![alt text](assets/bp-21-yoni-goldberg-eslint.jpeg "The wrong Error object is thrown mistakenly, no stack-trace will appear for this error. Luckily, ESLint catches the next production bug")
+<br/>
+
+### :thumbsdown: アンチパターン：誤ったオブジェクトをthrowすると、スタックトレースが残らない。ESLintなら本番に出る前に検出できる
+
+![誤ったthrowを検出するESLint](assets/bp-21-yoni-goldberg-eslint.jpeg "Errorではないオブジェクトをthrowし、スタックトレースが失われる問題をESLintで検出する")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 5.2 Shorten the feedback loop with local developer-CI
+## ⚪️ 5.2 CIのチェックをローカルでも実行し、結果を早く受け取る
 
-:white_check_mark: **Do:** Using a CI with shiny quality inspections like testing, linting, vulnerabilities check, etc? Help developers run this pipeline also locally to solicit instant feedback and shorten the [feedback loop](https://www.gocd.org/2016/03/15/are-you-ready-for-continuous-delivery-part-2-feedback-loops/). Why? an efficient testing process constitutes many and iterative loops: (1) try-outs -> (2) feedback -> (3) refactor. The faster the feedback is, the more improvement iterations a developer can perform per-module and perfect the results. On the flip, when the feedback is late to come fewer improvement iterations could be packed into a single day, the team might already move forward to another topic/task/module and might not be up for refining that module.
+:white_check_mark: **推奨：** CIでテスト、リント、脆弱性検査などを行っているなら、その一連の処理を開発者がローカルでも実行できるようにしましょう。すぐに結果を得て、[フィードバックループ](https://www.gocd.org/2016/03/15/are-you-ready-for-continuous-delivery-part-2-feedback-loops/)を短くするためです。効果的なテストでは、(1)試す、(2)結果を知る、(3)修正する、という流れを何度も繰り返します。結果が早く返るほど、1つのモジュールに対して改善を重ねられます。逆に遅いと、1日にできる改善回数が減ります。チームが別の話題や作業、モジュールへ移ってしまい、元のモジュールを磨き込む気がなくなるかもしれません。
 
-Practically, some CI vendors (Example: [CircleCI local CLI](https://circleci.com/docs/2.0/local-cli/)) allow running the pipeline locally. Some commercial tools like [wallaby provide highly-valuable & testing insights](https://wallabyjs.com/) as a developer prototype (no affiliation). Alternatively, you may just add npm script to package.json that runs all the quality commands (e.g. test, lint, vulnerabilities) — use tools like [concurrently](https://www.npmjs.com/package/concurrently) for parallelization and non-zero exit code if one of the tools failed. Now the developer should just invoke one command — e.g. ‘npm run quality’ — to get instant feedback. Consider also aborting a commit if the quality check failed using a githook ([husky can help](https://github.com/typicode/husky))
+具体的には、[CircleCIのローカルCLI](https://circleci.com/docs/2.0/local-cli/)など、CIの処理をローカルで実行できるサービスがあります。[Wallaby](https://wallabyjs.com/)のように、試作中の開発者へ役立つテスト情報を返す商用ツールもあります。著者と同製品に利害関係はありません。単にpackage.jsonへ、テスト、リント、脆弱性検査などをまとめて実行するnpmスクリプトを追加してもよいでしょう。[concurrently](https://www.npmjs.com/package/concurrently)などを使えば、並列実行し、どれかが失敗したときに0以外の終了コードを返せます。開発者は`npm run quality`のような1コマンドで、すぐに結果を得られます。Gitフックを使い、品質チェックの失敗時にコミットを止めることも検討してください（[Husky](https://github.com/typicode/husky)が役立ちます）。
 <br/>
 
-❌ **Otherwise:** When the quality results arrive the day after the code, testing doesn’t become a fluent part of development rather an after the fact formal artifact
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** コードを書いた翌日に結果が届くようでは、テストは開発の自然な一部ではなく、後から形式的に行う作業になります。
 
 <br/>
 
-### :clap: Doing It Right Example: npm scripts that perform code quality inspection, all are run in parallel on demand or when a developer is trying to push new code
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 良い例：npmスクリプトで品質チェックをまとめ、必要なときやpush時に並列実行する
 
 ```json
 {
@@ -1873,22 +1914,22 @@ Practically, some CI vendors (Example: [CircleCI local CLI](https://circleci.com
 
 <br/><br/>
 
-## ⚪ ️5.3 Perform e2e testing over a true production-mirror
+## ⚪️ 5.3 本番を忠実に再現した環境でE2Eテストを行う
 
-:white_check_mark: **Do:** End to end (e2e) testing are the main challenge of every CI pipeline — creating an identical ephemeral production mirror on the fly with all the related cloud services can be tedious and expensive. Finding the best compromise is your game: [Docker-compose](https://serverless.com/) allows crafting isolated dockerized environment with identical containers using a single plain text file but the backing technology (e.g. networking, deployment model) is different from real-world productions. You may combine it with [‘AWS Local’](https://github.com/localstack/localstack) to work with a stub of the real AWS services. If you went [serverless](https://serverless.com/) multiple frameworks like serverless and [AWS SAM](https://docs.aws.amazon.com/lambda/latest/dg/serverless_app.html) allows the local invocation of FaaS code.
+:white_check_mark: **推奨：** E2Eテストは、どのCIパイプラインでも大きな課題です。関連するクラウドサービスを含め、本番と同じ一時環境をその場で作るのは、手間も費用もかかります。適切な妥協点を探しましょう。[Docker Compose](https://serverless.com/)なら、1つのテキストファイルで、同じコンテナーを使った隔離環境を作れます。ただし、ネットワークやデプロイ方式などの基盤は、実際の本番環境と異なります。[LocalStack（原文では「AWS Local」）](https://github.com/localstack/localstack)を組み合わせれば、AWSサービスのスタブも利用できます。[サーバーレス](https://serverless.com/)を採用しているなら、Serverless Frameworkや[AWS SAM](https://docs.aws.amazon.com/lambda/latest/dg/serverless_app.html)などで、FaaSのコードをローカルから呼び出せます。
 
-The huge Kubernetes ecosystem is yet to formalize a standard convenient tool for local and CI-mirroring though many new tools are launched frequently. One approach is running a ‘minimized-Kubernetes’ using tools like [Minikube](https://kubernetes.io/docs/setup/minikube/) and [MicroK8s](https://microk8s.io/) which resemble the real thing only come with less overhead. Another approach is testing over a remote ‘real-Kubernetes’, some CI providers (e.g. [Codefresh](https://codefresh.io/)) has native integration with Kubernetes environment and make it easy to run the CI pipeline over the real thing, others allow custom scripting against a remote Kubernetes.
+Kubernetesのエコシステムは巨大で、新しいツールも頻繁に登場しますが、ローカル環境やCIで本番を再現するための、便利で標準的なツールはまだ定まっていません。1つの方法は、[Minikube](https://kubernetes.io/docs/setup/minikube/)や[MicroK8s](https://microk8s.io/)で小規模なKubernetesを動かすことです。本番に似た環境を、より少ない負担で用意できます。もう1つは、リモートの実際のKubernetes上でテストする方法です。[Codefresh](https://codefresh.io/)のようにKubernetesとの連携機能を備え、本物の環境でCIを実行しやすいサービスもあれば、独自スクリプトでリモートのKubernetesを操作できるサービスもあります。
 <br/>
 
-❌ **Otherwise:** Using different technologies for production and testing demands maintaining two deployment models and keeps the developers and the ops team separated
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 本番とテストで異なる技術を使うと、2つのデプロイ方式を保守する必要があり、開発チームと運用チームの分断も続きます。
 
 <br/>
 
-### :clap: Example: a CI pipeline that generates Kubernetes cluster on the fly <a href="https://container-solutions.com/dynamic-environments-kubernetes/" data-href="https://container-solutions.com/dynamic-environments-kubernetes/" class="markup--anchor markup--p-anchor" rel="noopener nofollow" target="_blank">([Credit: Dynamic-environments Kubernetes](https://container-solutions.com/dynamic-environments-kubernetes/))</a>
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 例：Kubernetesクラスターをその場で作成するCIパイプライン（[出典：Dynamic Environments Kubernetes](https://container-solutions.com/dynamic-environments-kubernetes/)）
 
 <pre name="38d9" id="38d9" class="graf graf--pre graf-after--p">deploy:<br>stage: deploy<br>image: registry.gitlab.com/gitlab-examples/kubernetes-deploy<br>script:<br>- ./configureCluster.sh $KUBE_CA_PEM_FILE $KUBE_URL $KUBE_TOKEN<br>- kubectl create ns $NAMESPACE<br>- kubectl create secret -n $NAMESPACE docker-registry gitlab-registry --docker-server="$CI_REGISTRY" --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD" --docker-email="$GITLAB_USER_EMAIL"<br>- mkdir .generated<br>- echo "$CI_BUILD_REF_NAME-$CI_BUILD_REF"<br>- sed -e "s/TAG/$CI_BUILD_REF_NAME-$CI_BUILD_REF/g" templates/deals.yaml | tee ".generated/deals.yaml"<br>- kubectl apply --namespace $NAMESPACE -f .generated/deals.yaml<br>- kubectl apply --namespace $NAMESPACE -f templates/my-sock-shop.yaml<br>environment:<br>name: test-for-ci</pre>
 
@@ -1896,39 +1937,39 @@ The huge Kubernetes ecosystem is yet to formalize a standard convenient tool for
 
 <br/><br/>
 
-## ⚪ ️5.4 Parallelize test execution
+## ⚪️ 5.4 テストを並列実行する
 
-:white_check_mark: **Do:** When done right, testing is your 24/7 friend providing almost instant feedback. In practice, executing 500 CPU-bounded unit test on a single thread can take too long. Luckily, modern test runners and CI platforms (like [Jest](https://github.com/facebook/jest), [AVA](https://github.com/avajs/ava) and [Mocha extensions](https://github.com/yandex/mocha-parallel-tests)) can parallelize the test into multiple processes and achieve significant improvement in feedback time. Some CI vendors do also parallelize tests across containers (!) which shortens the feedback loop even further. Whether locally over multiple processes, or over some cloud CLI using multiple machines — parallelizing demand keeping the tests autonomous as each might run on different processes
+:white_check_mark: **推奨：** 適切に作られたテストは、いつでも、ほぼ即座に結果を返してくれます。しかし、CPU負荷の高いユニットテストを500件、1つのスレッドで実行すると、時間がかかりすぎることがあります。幸い、[Jest](https://github.com/facebook/jest)、[AVA](https://github.com/avajs/ava)、[Mochaの拡張](https://github.com/yandex/mocha-parallel-tests)などのテストランナーやCI環境は、複数のプロセスにテストを分散し、待ち時間を大幅に減らせます。コンテナーをまたいで並列実行し、さらに短縮できるCIサービスもあります。ローカルの複数プロセスでも、クラウドのCLIから複数マシンを使う場合でも、各テストが別々のプロセスで動く可能性があるため、テストを独立させる必要があります。
 
-❌ **Otherwise:** Getting test results 1 hour long after pushing new code, as you already code the next features, is a great recipe for making testing less relevant
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** pushから1時間後、すでに次の機能を書いているときにテスト結果が届くようでは、テストが軽視されやすくなります。
 
 <br/>
 
-### :clap: Doing It Right Example: Mocha parallel & Jest easily outrun the traditional Mocha thanks to testing parallelization ([Credit: JavaScript Test-Runners Benchmark](https://medium.com/dailyjs/javascript-test-runners-benchmark-3a78d4117b4))
+<details><summary>✏ <b>コード例</b></summary>
 
-![alt text](assets/bp-24-yonigoldberg-jest-parallel.png "Mocha parallel & Jest easily outrun the traditional Mocha thanks to testing parallelization (Credit: JavaScript Test-Runners Benchmark)")
+<br/>
+
+### :clap: 良い例：Mochaの並列実行版とJestは、並列化によって従来のMochaを大きく上回る（[出典：JavaScript Test-Runners Benchmark](https://medium.com/dailyjs/javascript-test-runners-benchmark-3a78d4117b4)）
+
+![Mochaの並列実行版とJestのベンチマーク](assets/bp-24-yonigoldberg-jest-parallel.png "並列化による高速化。出典：JavaScript Test-Runners Benchmark")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️5.5 Stay away from legal issues using license and plagiarism check
+## ⚪️ 5.5 ライセンスと盗用を検査し、法的な問題を避ける
 
-:white_check_mark: **Do:** Licensing and plagiarism issues are probably not your main concern right now, but why not tick this box as well in 10 minutes? A bunch of npm packages like [license check](https://www.npmjs.com/package/license-checker) and [plagiarism check](https://www.npmjs.com/package/plagiarism-checker) (commercial with free plan) can be easily baked into your CI pipeline and inspect for sorrows like dependencies with restrictive licenses or code that was copy-pasted from Stack Overflow and apparently violates some copyrights
+:white_check_mark: **推奨：** ライセンスや盗用は、今いちばん気になる問題ではないかもしれません。それでも10分で確認を追加できるなら、やっておきませんか。[license-checker](https://www.npmjs.com/package/license-checker)や、無料プランのある商用ツール[plagiarism-checker](https://www.npmjs.com/package/plagiarism-checker)などのnpmパッケージは、CIに簡単に組み込めます。制約の厳しいライセンスの依存パッケージや、Stack Overflowからコピーしたコードによる著作権侵害の疑いなどを調べられます。
 
-❌ **Otherwise:** Unintentionally, developers might use packages with inappropriate licenses or copy paste commercial code and run into legal issues
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 意図せず不適切なライセンスのパッケージを使ったり、商用コードをコピーしたりして、法的な問題に巻き込まれるかもしれません。
 
 <br/>
 
-### :clap: Doing It Right Example:
+<details><summary>✏ <b>コード例</b></summary>
+
+<br/>
+
+### :clap: 良い例：依存パッケージのライセンスを検査する
 
 ```shell
 # install license-checker in your CI environment or also locally
@@ -1940,111 +1981,115 @@ license-checker --summary --failOn BSD
 
 <br/>
 
-![alt text](assets/bp-25-nodejs-licsense.png)
+![依存パッケージのライセンス検査結果](assets/bp-25-nodejs-licsense.png)
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️5.6 Constantly inspect for vulnerable dependencies
+## ⚪️ 5.6 依存パッケージの脆弱性を継続的に検査する
 
-:white_check_mark: **Do:** Even the most reputable dependencies such as Express have known vulnerabilities. This can get easily tamed using community tools such as [npm audit](https://docs.npmjs.com/getting-started/running-a-security-audit), or commercial tools like [snyk](https://snyk.io/) (offer also a free community version). Both can be invoked from your CI on every build
+:white_check_mark: **推奨：** Expressのように信頼されている依存パッケージにも、既知の脆弱性はあります。[npm audit](https://docs.npmjs.com/getting-started/running-a-security-audit)などのコミュニティのツールや、コミュニティ向け無料版もある商用ツール[Snyk](https://snyk.io/)を使えば、簡単に検査できます。どちらもCIからビルドごとに実行できます。
 
-❌ **Otherwise:** Keeping your code clean from vulnerabilities without dedicated tools will require to constantly follow online publications about new threats. Quite tedious
-
-<br/>
-
-<details><summary>✏ <b>Code Examples</b></summary>
+❌ **守らないと：** 専用ツールなしで脆弱性を避け続けるには、新しい脅威についての情報を常に追いかける必要があり、大変な手間になります。
 
 <br/>
 
-### :clap: Example: NPM Audit result
+<details><summary>✏ <b>コード例</b></summary>
 
-![alt text](assets/bp-26-npm-audit-snyk.png "NPM Audit result")
+<br/>
+
+### :clap: 例：npm auditの結果
+
+![npm auditの検査結果](assets/bp-26-npm-audit-snyk.png "npm auditの検査結果")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️5.7 Automate dependency updates
+<a id="practice-5-7"></a>
 
-:white_check_mark: **Do:** Yarn and npm latest introduction of package-lock.json introduced a serious challenge (the road to hell is paved with good intentions) — by default now, packages are no longer getting updates. Even a team running many fresh deployments with ‘npm install’ & ‘npm update’ won’t get any new updates. This leads to subpar dependent packages versions at best or to vulnerable code at worst. Teams now rely on developers goodwill and memory to manually update the package.json or use tools [like ncu](https://www.npmjs.com/package/npm-check-updates) manually. A more reliable way could be to automate the process of getting the most reliable dependency versions, though there are no silver bullet solutions yet there are two possible automation roads:
+## ⚪️ 5.7 依存パッケージの更新を自動化する
 
-(1) CI can fail builds that have obsolete dependencies — using tools like [‘npm outdated’](https://docs.npmjs.com/cli/outdated) or ‘npm-check-updates (ncu)’ . Doing so will enforce developers to update dependencies.
+:white_check_mark: **推奨：** Yarnやnpmでロックファイルが導入された結果、重大な課題が生まれました。善意の変更でも、思わぬ問題につながることがあります。原文では、既定ではパッケージが更新されなくなり、`npm install`や`npm update`を使って頻繁にデプロイしても新しい更新を取り込めない、と説明しています。その結果、よくても古い依存パッケージを使い続け、悪ければ脆弱なコードを使うことになります。package.jsonを手動で更新するか、[ncu](https://www.npmjs.com/package/npm-check-updates)などを手動実行するかは、開発者の注意と記憶に頼ってしまいます。より確実なのは、信頼できるバージョンの取得を自動化する方法です。万能な解決策はまだありませんが、自動化には次の2つの方向があります。
 
-(2) Use commercial tools that scan the code and automatically send pull requests with updated dependencies. One interesting question remaining is what should be the dependency update policy — updating on every patch generates too many overhead, updating right when a major is released might point to an unstable version (many packages found vulnerable on the very first days after being released, [see the](https://nodesource.com/blog/a-high-level-post-mortem-of-the-eslint-scope-security-incident/) eslint-scope incident).
+(1) 古い依存パッケージを含むビルドをCIで失敗させます。[`npm outdated`](https://docs.npmjs.com/cli/outdated)や`npm-check-updates（ncu）`を使えば、開発者に更新を促せます。
 
-An efficient update policy may allow some ‘vesting period’ — let the code lag behind the @latest for some time and versions before considering the local copy as obsolete (e.g. local version is 1.3.1 and repository version is 1.3.8)
+(2) コードを調べ、依存パッケージを更新するプルリクエストを自動で送る商用ツールを使います。残る問題は、どの頻度で更新するかです。パッチのたびに更新すると手間が増え、メジャー版の公開直後に更新すると、不安定な版を取り込むかもしれません。公開後の数日間で脆弱性が見つかるパッケージもあります（[eslint-scopeの事件](https://nodesource.com/blog/a-high-level-post-mortem-of-the-eslint-scope-security-incident/)を参照）。
+
+有効な更新方針として、一定の待機期間を設ける方法があります。`@latest`より少し古い期間やバージョン差を許容し、その範囲を超えたら更新対象とします。たとえば、手元が1.3.1、公開版が1.3.8という状態です。
 <br/>
 
-❌ **Otherwise:** Your production will run packages that have been explicitly tagged by their author as risky
+❌ **守らないと：** 作者自身が危険と明示しているパッケージを、本番で動かし続けるかもしれません。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :clap: Example: [ncu](https://www.npmjs.com/package/npm-check-updates) can be used manually or within a CI pipeline to detect to which extent the code lag behind the latest versions
+### :clap: 例：[ncu](https://www.npmjs.com/package/npm-check-updates)を手動またはCIで実行し、最新版からどれだけ遅れているかを調べる
 
-![alt text](assets/bp-27-yoni-goldberg-npm.png "ncu can be used manually or within a CI pipeline to detect to which extent the code lag behind the latest versions")
+![ncuによる依存パッケージの更新確認](assets/bp-27-yoni-goldberg-npm.png "ncuを手動またはCIで実行し、最新版との差を調べる")
 
 </details>
 
 <br/><br/>
 
-## ⚪ ️ 5.8 Other, non-Node related, CI tips
+## ⚪️ 5.8 Node.jsに限らない、CIのそのほかの基本
 
-:white_check_mark: **Do:** This post is focused on testing advice that is related to, or at least can be exemplified with Node JS. This bullet, however, groups few non-Node related tips that are well-known
+:white_check_mark: **推奨：** このガイドはNode.jsに関係する助言、または少なくともNode.jsで例示できる助言を中心にしています。この項目では、Node.jsに限らない、よく知られたCIの基本をまとめます。
 
- <ol class="postList"><li name="e3e4" id="e3e4" class="graf graf--li graf-after--p">Use a declarative syntax. This is the only option for most vendors but older versions of Jenkins allows using code or UI</li><li name="1fdc" id="1fdc" class="graf graf--li graf-after--li">Opt for a vendor that has native Docker support</li><li name="edcd" id="edcd" class="graf graf--li graf-after--li">Fail early, run your fastest tests first. Create a ‘Smoke testing’ step/milestone that groups multiple fast inspections (e.g. linting, unit tests) and provide snappy feedback to the code committer</li><li name="0375" id="0375" class="graf graf--li graf-after--li">Make it easy to skim-through all build artifacts including test reports, coverage reports, mutation reports, logs, etc</li><li name="df82" id="df82" class="graf graf--li graf-after--li">Create multiple pipelines/jobs for each event, reuse steps between them. For example, configure a job for feature branch commits and a different one for master PR. Let each reuse logic using shared steps (most vendors provide some mechanism for code reuse)</li><li name="19b0" id="19b0" class="graf graf--li graf-after--li">Never embed secrets in a job declaration, grab them from a secret store or from the job’s configuration</li><li name="b70d" id="b70d" class="graf graf--li graf-after--li">Explicitly bump version in a release build or at least ensure the developer did so</li><li name="957c" id="957c" class="graf graf--li graf-after--li">Build only once and perform all the inspections over the single build artifact (e.g. Docker image)</li><li name="339b" id="339b" class="graf graf--li graf-after--li">Test in an ephemeral environment that doesn’t drift state between builds. Caching node_modules might be the only exception</li></ol>
+<ol><li>宣言的な構文を使います。多くのCIサービスではそれが唯一の選択肢ですが、古いJenkinsではコードやUIも使えます。</li><li>Dockerを標準でサポートするサービスを選びます。</li><li>失敗は早く検出しましょう。最も速いテストから実行します。リントやユニットテストなど、短い検査をまとめた「スモークテスト」のステップを用意し、コミットした人へすぐに結果を返します。</li><li>テスト、カバレッジ、ミューテーションテストの各レポートやログなど、ビルドの成果物を簡単に見渡せるようにします。</li><li>イベントごとにパイプラインやジョブを分け、ステップは共有します。たとえば機能ブランチへのコミット用とmasterへのプルリクエスト用で別々のジョブを作り、共通ステップを再利用します。多くのサービスには再利用の仕組みがあります。</li><li>ジョブの定義にシークレットを埋め込まないでください。シークレットストアやジョブの設定から取得します。</li><li>リリースビルドでバージョンを明示的に上げるか、少なくとも開発者が上げたことを確認します。</li><li>ビルドは一度だけ行い、Dockerイメージなどの同じ成果物に対して、すべての検査を実行します。</li><li>ビルド間で状態が持ち越されない一時環境でテストします。例外として考えられるのはnode_modulesのキャッシュ程度です。</li></ol>
 <br/>
 
-❌ **Otherwise:** You‘ll miss years of wisdom
+❌ **守らないと：** 長年蓄積された知恵を取り逃してしまいます。
 
 <br/><br/>
 
-## ⚪ ️ 5.9 Build matrix: Run the same CI steps using multiple Node versions
+<a id="practice-5-9"></a>
 
-:white_check_mark: **Do:** Quality checking is about serendipity, the more ground you cover the luckier you get in detecting issues early. When developing reusable packages or running a multi-customer production with various configuration and Node versions, the CI must run the pipeline of tests over all the permutations of configurations. For example, assuming we use MySQL for some customers and Postgres for others — some CI vendors support a feature called ‘Matrix’ which allow running the suit of testing against all permutations of MySQL, Postgres and multiple Node version like 8, 9 and 10. This is done using configuration only without any additional effort (assuming you have testing or any other quality checks). Other CIs who doesn’t support Matrix might have extensions or tweaks to allow that
+## ⚪️ 5.9 ビルドマトリックス：複数のNode.jsバージョンで同じCI手順を実行する
+
+:white_check_mark: **推奨：** 品質チェックでは、試す範囲を広げるほど、思わぬ問題を早期に発見できる機会が増えます。再利用可能なパッケージを開発する場合や、顧客ごとに設定・Node.jsバージョンが異なる本番環境を運用する場合、CIはその組み合わせ全体でテストを実行する必要があります。たとえばMySQLを使う顧客とPostgresを使う顧客がいるとします。一部のCIサービスの「マトリックス」機能なら、MySQL・Postgresと、Node.js 8・9・10などのバージョンの全組み合わせでテストスイートを実行できます。テストなどの品質チェックがすでにあるなら、追加の実装は不要で、設定だけで対応できます。マトリックスを標準で備えないCIでも、拡張機能や設定の工夫で実現できる場合があります。
 <br/>
 
-❌ **Otherwise:** So after doing all that hard work of writing testing are we going to let bugs sneak in only because of configuration issues?
+❌ **守らないと：** テストを書くためにあれだけ苦労したのに、設定の違いだけでバグの侵入を許してしまってよいのでしょうか。
 
 <br/>
 
-<details><summary>✏ <b>Code Examples</b></summary>
+<details><summary>✏ <b>コード例</b></summary>
 
 <br/>
 
-### :clap: Example: Using Travis (CI vendor) build definition to run the same test over multiple Node versions
+### :clap: 例：Travis CIのビルド定義で、複数のNode.jsバージョンに同じテストを実行する
 
 <pre name="f909" id="f909" class="graf graf--pre graf-after--p">language: node_js<br>node_js:<br>  - "7"<br>  - "6"<br>  - "5"<br>  - "4"<br>install:<br>  - npm install<br>script:<br>  - npm run test</pre>
 </details>
 
 <br/><br/>
 
-# Team
+# 制作チーム
 
 ## Yoni Goldberg
 
 <br/>
-<img width="480px" src="assets/yoni-goldberg.jpg"/>
+<img width="480px" src="assets/yoni-goldberg.jpg" alt="著者 Yoni Goldberg"/>
 <br/>
 
-**Role:** Writer
+**役割：** 執筆
 
-**About:** I'm an independent consultant who works with Fortune 500 companies and garage startups on polishing their JS & Node.js applications. More than any other topic I'm fascinated by and aims to master the art of testing. I'm also the author of [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
+**紹介：** 独立したコンサルタントとして、Fortune 500企業から小さなスタートアップまで、JavaScript・Node.jsアプリケーションの改善を支援しています。何よりもテストに関心があり、その技術を極めたいと考えています。[Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)の著者でもあります。
 
-**📗 Online Course:** Liked this guide and wish to take your testing skills to the extreme? Consider visiting my comprehensive course [Testing Node.js & JavaScript From A To Z](https://www.testjavascript.com)
+**📗 オンライン講座：** このガイドを気に入り、さらにテストの技術を磨きたい方は、著者の講座 [Testing Node.js & JavaScript From A To Z](https://www.testjavascript.com) をご覧ください。
 
 <br/>
 
-**Follow:**
+**リンク：**
 
 - [🐦 Twitter](https://twitter.com/goldbergyoni/)
-- [📞 Contact](https://testjavascript.com/contact-2/)
-- [✉️ Newsletter](https://testjavascript.com/newsletter//)
+- [📞 お問い合わせ](https://testjavascript.com/contact-2/)
+- [✉️ ニュースレター](https://testjavascript.com/newsletter//)
 
 <br/>
 <hr/>
@@ -2052,30 +2097,30 @@ An efficient update policy may allow some ‘vesting period’ — let the c
 
 ## [Bruno Scheufler](https://github.com/BrunoScheufler)
 
-**Role:** Tech reviewer and advisor
+**役割：** 技術レビューと助言
 
-Took care to revise, improve, lint and polish all the texts
+全文の見直し、改善、リント、推敲を担当しました。
 
-**About:** full-stack web engineer, Node.js & GraphQL enthusiast
+**紹介：** Node.jsとGraphQLを好む、フルスタックのWebエンジニアです。
 
 <hr/>
 <br/>
 
 ## [Ido Richter](https://github.com/idori)
 
-**Role:** Concept, design and great advice
+**役割：** 構想、デザイン、助言
 
-**About:** A savvy frontend developer, CSS expert and emojis freak
+**紹介：** 経験豊富なフロントエンド開発者で、CSSの専門家。絵文字も大好きです。
 
 ## [Kyle Martin](https://github.com/js-kyle)
 
-**Role:** Helps keep this project running, and reviews security related practices
+**役割：** プロジェクトの運営支援と、セキュリティ関連のプラクティスのレビュー
 
-**About:** Loves working on Node.js projects and web application security.
+**紹介：** Node.jsのプロジェクトとWebアプリケーションのセキュリティに取り組むことを好んでいます。
 
-## Contributors ✨
+## コントリビューター ✨
 
-Thanks goes to these wonderful people who have contributed to this repository!
+このリポジトリに貢献してくださった皆さんに感謝します。
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -2083,72 +2128,72 @@ Thanks goes to these wonderful people who have contributed to this repository!
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="http://geospatialscott.blogspot.com/"><img src="https://avatars3.githubusercontent.com/u/1326248?v=4?s=100" width="100px;" alt="Scott Davis"/><br /><sub><b>Scott Davis</b></sub></a><br /><a href="#content-stdavis" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/AdrienRedon"><img src="https://avatars2.githubusercontent.com/u/5978436?v=4?s=100" width="100px;" alt="Adrien REDON"/><br /><sub><b>Adrien REDON</b></sub></a><br /><a href="#content-AdrienRedon" title="Content">🖋</a></td>
-      <td align="center"><a href="https://twitter.com/NoriSte"><img src="https://avatars0.githubusercontent.com/u/173663?v=4?s=100" width="100px;" alt="Stefano Magni"/><br /><sub><b>Stefano Magni</b></sub></a><br /><a href="#content-NoriSte" title="Content">🖋</a></td>
-      <td align="center"><a href="https://www.joer.im"><img src="https://avatars2.githubusercontent.com/u/47742486?v=4?s=100" width="100px;" alt="Yeoh Joer"/><br /><sub><b>Yeoh Joer</b></sub></a><br /><a href="#content-yjoer" title="Content">🖋</a></td>
-      <td align="center"><a href="http://jhonnymoreira.dev"><img src="https://avatars0.githubusercontent.com/u/2177742?v=4?s=100" width="100px;" alt="Jhonny Moreira"/><br /><sub><b>Jhonny Moreira</b></sub></a><br /><a href="#content-jhonnymoreira" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/Germanika"><img src="https://avatars2.githubusercontent.com/u/8846678?v=4?s=100" width="100px;" alt="Ian Germann"/><br /><sub><b>Ian Germann</b></sub></a><br /><a href="#content-Germanika" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/AbdelrahmanHafez"><img src="https://avatars3.githubusercontent.com/u/19984935?v=4?s=100" width="100px;" alt="Hafez"/><br /><sub><b>Hafez</b></sub></a><br /><a href="#content-AbdelrahmanHafez" title="Content">🖋</a></td>
+      <td align="center"><a href="http://geospatialscott.blogspot.com/"><img src="https://avatars3.githubusercontent.com/u/1326248?v=4?s=100" width="100px;" alt="Scott Davis"/><br /><sub><b>Scott Davis</b></sub></a><br /><a href="#content-stdavis" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/AdrienRedon"><img src="https://avatars2.githubusercontent.com/u/5978436?v=4?s=100" width="100px;" alt="Adrien REDON"/><br /><sub><b>Adrien REDON</b></sub></a><br /><a href="#content-AdrienRedon" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://twitter.com/NoriSte"><img src="https://avatars0.githubusercontent.com/u/173663?v=4?s=100" width="100px;" alt="Stefano Magni"/><br /><sub><b>Stefano Magni</b></sub></a><br /><a href="#content-NoriSte" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://www.joer.im"><img src="https://avatars2.githubusercontent.com/u/47742486?v=4?s=100" width="100px;" alt="Yeoh Joer"/><br /><sub><b>Yeoh Joer</b></sub></a><br /><a href="#content-yjoer" title="執筆">🖋</a></td>
+      <td align="center"><a href="http://jhonnymoreira.dev"><img src="https://avatars0.githubusercontent.com/u/2177742?v=4?s=100" width="100px;" alt="Jhonny Moreira"/><br /><sub><b>Jhonny Moreira</b></sub></a><br /><a href="#content-jhonnymoreira" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/Germanika"><img src="https://avatars2.githubusercontent.com/u/8846678?v=4?s=100" width="100px;" alt="Ian Germann"/><br /><sub><b>Ian Germann</b></sub></a><br /><a href="#content-Germanika" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/AbdelrahmanHafez"><img src="https://avatars3.githubusercontent.com/u/19984935?v=4?s=100" width="100px;" alt="Hafez"/><br /><sub><b>Hafez</b></sub></a><br /><a href="#content-AbdelrahmanHafez" title="執筆">🖋</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="http://www.ruxandrafediuc.com"><img src="https://avatars1.githubusercontent.com/u/11021586?v=4?s=100" width="100px;" alt="Ruxandra Fediuc"/><br /><sub><b>Ruxandra Fediuc</b></sub></a><br /><a href="#content-ruxandrafed" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/jacklee814"><img src="https://avatars0.githubusercontent.com/u/9951291?v=4?s=100" width="100px;" alt="Jack"/><br /><sub><b>Jack</b></sub></a><br /><a href="#content-jacklee814" title="Content">🖋</a></td>
-      <td align="center"><a href="https://www.petercarrero.com"><img src="https://avatars0.githubusercontent.com/u/231727?v=4?s=100" width="100px;" alt="Peter Carrero"/><br /><sub><b>Peter Carrero</b></sub></a><br /><a href="#content-aloyr" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/huhgawz"><img src="https://avatars3.githubusercontent.com/u/369338?v=4?s=100" width="100px;" alt="Huhgawz"/><br /><sub><b>Huhgawz</b></sub></a><br /><a href="#content-huhgawz" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/haakonmb"><img src="https://avatars1.githubusercontent.com/u/7099302?v=4?s=100" width="100px;" alt="Haakon Borch"/><br /><sub><b>Haakon Borch</b></sub></a><br /><a href="#content-haakonmb" title="Content">🖋</a></td>
-      <td align="center"><a href="https://jaimemendoza.com/"><img src="https://avatars3.githubusercontent.com/u/5395811?v=4?s=100" width="100px;" alt="Jaime Mendoza"/><br /><sub><b>Jaime Mendoza</b></sub></a><br /><a href="#content-jaimemendozadev" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/camerondunford"><img src="https://avatars0.githubusercontent.com/u/840612?v=4?s=100" width="100px;" alt="Cameron Dunford"/><br /><sub><b>Cameron Dunford</b></sub></a><br /><a href="#content-camerondunford" title="Content">🖋</a></td>
+      <td align="center"><a href="http://www.ruxandrafediuc.com"><img src="https://avatars1.githubusercontent.com/u/11021586?v=4?s=100" width="100px;" alt="Ruxandra Fediuc"/><br /><sub><b>Ruxandra Fediuc</b></sub></a><br /><a href="#content-ruxandrafed" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/jacklee814"><img src="https://avatars0.githubusercontent.com/u/9951291?v=4?s=100" width="100px;" alt="Jack"/><br /><sub><b>Jack</b></sub></a><br /><a href="#content-jacklee814" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://www.petercarrero.com"><img src="https://avatars0.githubusercontent.com/u/231727?v=4?s=100" width="100px;" alt="Peter Carrero"/><br /><sub><b>Peter Carrero</b></sub></a><br /><a href="#content-aloyr" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/huhgawz"><img src="https://avatars3.githubusercontent.com/u/369338?v=4?s=100" width="100px;" alt="Huhgawz"/><br /><sub><b>Huhgawz</b></sub></a><br /><a href="#content-huhgawz" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/haakonmb"><img src="https://avatars1.githubusercontent.com/u/7099302?v=4?s=100" width="100px;" alt="Haakon Borch"/><br /><sub><b>Haakon Borch</b></sub></a><br /><a href="#content-haakonmb" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://jaimemendoza.com/"><img src="https://avatars3.githubusercontent.com/u/5395811?v=4?s=100" width="100px;" alt="Jaime Mendoza"/><br /><sub><b>Jaime Mendoza</b></sub></a><br /><a href="#content-jaimemendozadev" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/camerondunford"><img src="https://avatars0.githubusercontent.com/u/840612?v=4?s=100" width="100px;" alt="Cameron Dunford"/><br /><sub><b>Cameron Dunford</b></sub></a><br /><a href="#content-camerondunford" title="執筆">🖋</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="https://github.com/shadowspawn"><img src="https://avatars1.githubusercontent.com/u/15719847?v=4?s=100" width="100px;" alt="John Gee"/><br /><sub><b>John Gee</b></sub></a><br /><a href="#content-shadowspawn" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/aurelijusrozenas"><img src="https://avatars0.githubusercontent.com/u/3273544?v=4?s=100" width="100px;" alt="Aurelijus Rožėnas"/><br /><sub><b>Aurelijus Rožėnas</b></sub></a><br /><a href="#content-aurelijusrozenas" title="Content">🖋</a></td>
-      <td align="center"><a href="http://aaronshivers.com"><img src="https://avatars2.githubusercontent.com/u/42848750?v=4?s=100" width="100px;" alt="Aaron"/><br /><sub><b>Aaron</b></sub></a><br /><a href="#content-aaronshivers" title="Content">🖋</a></td>
-      <td align="center"><a href="https://tomdoes.tech/"><img src="https://avatars1.githubusercontent.com/u/8683577?v=4?s=100" width="100px;" alt="Tom Nagle"/><br /><sub><b>Tom Nagle</b></sub></a><br /><a href="#content-tomanagle" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/yvesyao"><img src="https://avatars0.githubusercontent.com/u/7723729?v=4?s=100" width="100px;" alt="Yves yao"/><br /><sub><b>Yves yao</b></sub></a><br /><a href="#content-yvesyao" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/Userbit"><img src="https://avatars1.githubusercontent.com/u/34487074?v=4?s=100" width="100px;" alt="Userbit"/><br /><sub><b>Userbit</b></sub></a><br /><a href="#content-Userbit" title="Content">🖋</a></td>
-      <td align="center"><a href="https://glaucialemos.netlify.com/"><img src="https://avatars0.githubusercontent.com/u/1631477?v=4?s=100" width="100px;" alt="Glaucia Lemos"/><br /><sub><b>Glaucia Lemos</b></sub></a><br /><a href="#maintenance-glaucia86" title="Maintenance">🚧</a></td>
+      <td align="center"><a href="https://github.com/shadowspawn"><img src="https://avatars1.githubusercontent.com/u/15719847?v=4?s=100" width="100px;" alt="John Gee"/><br /><sub><b>John Gee</b></sub></a><br /><a href="#content-shadowspawn" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/aurelijusrozenas"><img src="https://avatars0.githubusercontent.com/u/3273544?v=4?s=100" width="100px;" alt="Aurelijus Rožėnas"/><br /><sub><b>Aurelijus Rožėnas</b></sub></a><br /><a href="#content-aurelijusrozenas" title="執筆">🖋</a></td>
+      <td align="center"><a href="http://aaronshivers.com"><img src="https://avatars2.githubusercontent.com/u/42848750?v=4?s=100" width="100px;" alt="Aaron"/><br /><sub><b>Aaron</b></sub></a><br /><a href="#content-aaronshivers" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://tomdoes.tech/"><img src="https://avatars1.githubusercontent.com/u/8683577?v=4?s=100" width="100px;" alt="Tom Nagle"/><br /><sub><b>Tom Nagle</b></sub></a><br /><a href="#content-tomanagle" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/yvesyao"><img src="https://avatars0.githubusercontent.com/u/7723729?v=4?s=100" width="100px;" alt="Yves yao"/><br /><sub><b>Yves yao</b></sub></a><br /><a href="#content-yvesyao" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/Userbit"><img src="https://avatars1.githubusercontent.com/u/34487074?v=4?s=100" width="100px;" alt="Userbit"/><br /><sub><b>Userbit</b></sub></a><br /><a href="#content-Userbit" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://glaucialemos.netlify.com/"><img src="https://avatars0.githubusercontent.com/u/1631477?v=4?s=100" width="100px;" alt="Glaucia Lemos"/><br /><sub><b>Glaucia Lemos</b></sub></a><br /><a href="#maintenance-glaucia86" title="保守">🚧</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="https://twitter.com/koooge"><img src="https://avatars2.githubusercontent.com/u/7419215?v=4?s=100" width="100px;" alt="koooge"/><br /><sub><b>koooge</b></sub></a><br /><a href="#content-koooge" title="Content">🖋</a></td>
-      <td align="center"><a href="https://twitter.com/michalbiesiada"><img src="https://avatars0.githubusercontent.com/u/18367606?v=4?s=100" width="100px;" alt="Michal"/><br /><sub><b>Michal</b></sub></a><br /><a href="#content-mbiesiad" title="Content">🖋</a></td>
-      <td align="center"><a href="http://roywalker.me"><img src="https://avatars0.githubusercontent.com/u/611846?v=4?s=100" width="100px;" alt="roywalker"/><br /><sub><b>roywalker</b></sub></a><br /><a href="#content-roywalker" title="Content">🖋</a></td>
-      <td align="center"><a href="https://dangen-effy.github.io/"><img src="https://avatars3.githubusercontent.com/u/23185799?v=4?s=100" width="100px;" alt="dangen"/><br /><sub><b>dangen</b></sub></a><br /><a href="#content-dangen-effy" title="Content">🖋</a></td>
-      <td align="center"><a href="https://dev.to/mbiesiad"><img src="https://avatars1.githubusercontent.com/u/60202305?v=4?s=100" width="100px;" alt="biesiadamich"/><br /><sub><b>biesiadamich</b></sub></a><br /><a href="#content-biesiadamich" title="Content">🖋</a></td>
-      <td align="center"><a href="https://tarojsx.github.io"><img src="https://avatars3.githubusercontent.com/u/127009?v=4?s=100" width="100px;" alt="Yanlin Jiang"/><br /><sub><b>Yanlin Jiang</b></sub></a><br /><a href="#content-cncolder" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/sanguino"><img src="https://avatars2.githubusercontent.com/u/2077168?v=4?s=100" width="100px;" alt="sanguino"/><br /><sub><b>sanguino</b></sub></a><br /><a href="#content-sanguino" title="Content">🖋</a></td>
+      <td align="center"><a href="https://twitter.com/koooge"><img src="https://avatars2.githubusercontent.com/u/7419215?v=4?s=100" width="100px;" alt="koooge"/><br /><sub><b>koooge</b></sub></a><br /><a href="#content-koooge" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://twitter.com/michalbiesiada"><img src="https://avatars0.githubusercontent.com/u/18367606?v=4?s=100" width="100px;" alt="Michal"/><br /><sub><b>Michal</b></sub></a><br /><a href="#content-mbiesiad" title="執筆">🖋</a></td>
+      <td align="center"><a href="http://roywalker.me"><img src="https://avatars0.githubusercontent.com/u/611846?v=4?s=100" width="100px;" alt="roywalker"/><br /><sub><b>roywalker</b></sub></a><br /><a href="#content-roywalker" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://dangen-effy.github.io/"><img src="https://avatars3.githubusercontent.com/u/23185799?v=4?s=100" width="100px;" alt="dangen"/><br /><sub><b>dangen</b></sub></a><br /><a href="#content-dangen-effy" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://dev.to/mbiesiad"><img src="https://avatars1.githubusercontent.com/u/60202305?v=4?s=100" width="100px;" alt="biesiadamich"/><br /><sub><b>biesiadamich</b></sub></a><br /><a href="#content-biesiadamich" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://tarojsx.github.io"><img src="https://avatars3.githubusercontent.com/u/127009?v=4?s=100" width="100px;" alt="Yanlin Jiang"/><br /><sub><b>Yanlin Jiang</b></sub></a><br /><a href="#content-cncolder" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/sanguino"><img src="https://avatars2.githubusercontent.com/u/2077168?v=4?s=100" width="100px;" alt="sanguino"/><br /><sub><b>sanguino</b></sub></a><br /><a href="#content-sanguino" title="執筆">🖋</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="https://github.com/MorganGeek"><img src="https://avatars0.githubusercontent.com/u/3721240?v=4?s=100" width="100px;" alt="Morgan"/><br /><sub><b>Morgan</b></sub></a><br /><a href="#content-MorganGeek" title="Content">🖋</a></td>
-      <td align="center"><a href="https://luk4s.dev"><img src="https://avatars0.githubusercontent.com/u/8350985?v=4?s=100" width="100px;" alt="Lukas Bischof"/><br /><sub><b>Lukas Bischof</b></sub></a><br /><a href="https://github.com/goldbergyoni/javascript-testing-best-practices/commits?author=lukasbischof" title="Tests">⚠️</a> <a href="#content-lukasbischof" title="Content">🖋</a></td>
-      <td align="center"><a href="https://juanmaruiz.surge.sh"><img src="https://avatars2.githubusercontent.com/u/1837650?v=4?s=100" width="100px;" alt="JuanMa Ruiz"/><br /><sub><b>JuanMa Ruiz</b></sub></a><br /><a href="#content-JuanMaRuiz" title="Content">🖋</a></td>
-      <td align="center"><a href="https://luisangelorjr.com.br"><img src="https://avatars3.githubusercontent.com/u/22268900?v=4?s=100" width="100px;" alt="Luís Ângelo Rodrigues Jr."/><br /><sub><b>Luís Ângelo Rodrigues Jr.</b></sub></a><br /><a href="#content-luisangelorjr" title="Content">🖋</a></td>
-      <td align="center"><a href="https://jfernandezpe.wordpress.com/"><img src="https://avatars0.githubusercontent.com/u/12046620?v=4?s=100" width="100px;" alt="José Fernández"/><br /><sub><b>José Fernández</b></sub></a><br /><a href="#content-jfernandezpe" title="Content">🖋</a></td>
-      <td align="center"><a href="http://www.linkedin.com/in/AlejandroGutierrezB"><img src="https://avatars3.githubusercontent.com/u/56408597?v=4?s=100" width="100px;" alt="Alejandro Gutierrez Barcenilla"/><br /><sub><b>Alejandro Gutierrez Barcenilla</b></sub></a><br /><a href="#content-AlejandroGutierrezB" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/jasonandmonte"><img src="https://avatars1.githubusercontent.com/u/30088000?v=4?s=100" width="100px;" alt="Jason"/><br /><sub><b>Jason</b></sub></a><br /><a href="#content-jasonandmonte" title="Content">🖋</a></td>
+      <td align="center"><a href="https://github.com/MorganGeek"><img src="https://avatars0.githubusercontent.com/u/3721240?v=4?s=100" width="100px;" alt="Morgan"/><br /><sub><b>Morgan</b></sub></a><br /><a href="#content-MorganGeek" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://luk4s.dev"><img src="https://avatars0.githubusercontent.com/u/8350985?v=4?s=100" width="100px;" alt="Lukas Bischof"/><br /><sub><b>Lukas Bischof</b></sub></a><br /><a href="https://github.com/goldbergyoni/javascript-testing-best-practices/commits?author=lukasbischof" title="テスト">⚠️</a> <a href="#content-lukasbischof" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://juanmaruiz.surge.sh"><img src="https://avatars2.githubusercontent.com/u/1837650?v=4?s=100" width="100px;" alt="JuanMa Ruiz"/><br /><sub><b>JuanMa Ruiz</b></sub></a><br /><a href="#content-JuanMaRuiz" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://luisangelorjr.com.br"><img src="https://avatars3.githubusercontent.com/u/22268900?v=4?s=100" width="100px;" alt="Luís Ângelo Rodrigues Jr."/><br /><sub><b>Luís Ângelo Rodrigues Jr.</b></sub></a><br /><a href="#content-luisangelorjr" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://jfernandezpe.wordpress.com/"><img src="https://avatars0.githubusercontent.com/u/12046620?v=4?s=100" width="100px;" alt="José Fernández"/><br /><sub><b>José Fernández</b></sub></a><br /><a href="#content-jfernandezpe" title="執筆">🖋</a></td>
+      <td align="center"><a href="http://www.linkedin.com/in/AlejandroGutierrezB"><img src="https://avatars3.githubusercontent.com/u/56408597?v=4?s=100" width="100px;" alt="Alejandro Gutierrez Barcenilla"/><br /><sub><b>Alejandro Gutierrez Barcenilla</b></sub></a><br /><a href="#content-AlejandroGutierrezB" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/jasonandmonte"><img src="https://avatars1.githubusercontent.com/u/30088000?v=4?s=100" width="100px;" alt="Jason"/><br /><sub><b>Jason</b></sub></a><br /><a href="#content-jasonandmonte" title="執筆">🖋</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="https://github.com/otavionetoca"><img src="https://avatars.githubusercontent.com/u/11263232?v=4?s=100" width="100px;" alt="Otavio Araujo"/><br /><sub><b>Otavio Araujo</b></sub></a><br /><a href="https://github.com/goldbergyoni/javascript-testing-best-practices/commits?author=otavionetoca" title="Tests">⚠️</a> <a href="#content-otavionetoca" title="Content">🖋</a></td>
-      <td align="center"><a href="https://contributor.pw"><img src="https://avatars.githubusercontent.com/u/5027939?v=4?s=100" width="100px;" alt="Alex Ivanov"/><br /><sub><b>Alex Ivanov</b></sub></a><br /><a href="#content-contributorpw" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/YeeJone"><img src="https://avatars.githubusercontent.com/u/20400822?v=4?s=100" width="100px;" alt="Yiqiao Xu"/><br /><sub><b>Yiqiao Xu</b></sub></a><br /><a href="#content-YeeJone" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/yubinTW"><img src="https://avatars.githubusercontent.com/u/31545456?v=4?s=100" width="100px;" alt="YuBin, Hsu"/><br /><sub><b>YuBin, Hsu</b></sub></a><br /><a href="#translation-yubinTW" title="Translation">🌍</a> <a href="https://github.com/goldbergyoni/javascript-testing-best-practices/commits?author=yubinTW" title="Code">💻</a></td>
-      <td align="center"><a href="https://github.com/TREER00T"><img src="https://avatars.githubusercontent.com/u/76606342?v=4?s=100" width="100px;" alt="Ali Azmoodeh"/><br /><sub><b>Ali Azmoodeh</b></sub></a><br /><a href="#content-TREER00T" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/Saimon398"><img src="https://avatars.githubusercontent.com/u/71539667?v=4?s=100" width="100px;" alt="Alex Popov"/><br /><sub><b>Alex Popov</b></sub></a><br /><a href="#content-Saimon398" title="Content">🖋</a></td>
-      <td align="center"><a href="http://shramko.dev"><img src="https://avatars.githubusercontent.com/u/42001531?v=4?s=100" width="100px;" alt="Serhii Shramko"/><br /><sub><b>Serhii Shramko</b></sub></a><br /><a href="#content-Shramkoweb" title="Content">🖋</a></td>
+      <td align="center"><a href="https://github.com/otavionetoca"><img src="https://avatars.githubusercontent.com/u/11263232?v=4?s=100" width="100px;" alt="Otavio Araujo"/><br /><sub><b>Otavio Araujo</b></sub></a><br /><a href="https://github.com/goldbergyoni/javascript-testing-best-practices/commits?author=otavionetoca" title="テスト">⚠️</a> <a href="#content-otavionetoca" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://contributor.pw"><img src="https://avatars.githubusercontent.com/u/5027939?v=4?s=100" width="100px;" alt="Alex Ivanov"/><br /><sub><b>Alex Ivanov</b></sub></a><br /><a href="#content-contributorpw" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/YeeJone"><img src="https://avatars.githubusercontent.com/u/20400822?v=4?s=100" width="100px;" alt="Yiqiao Xu"/><br /><sub><b>Yiqiao Xu</b></sub></a><br /><a href="#content-YeeJone" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/yubinTW"><img src="https://avatars.githubusercontent.com/u/31545456?v=4?s=100" width="100px;" alt="YuBin, Hsu"/><br /><sub><b>YuBin, Hsu</b></sub></a><br /><a href="#translation-yubinTW" title="翻訳">🌍</a> <a href="https://github.com/goldbergyoni/javascript-testing-best-practices/commits?author=yubinTW" title="コード">💻</a></td>
+      <td align="center"><a href="https://github.com/TREER00T"><img src="https://avatars.githubusercontent.com/u/76606342?v=4?s=100" width="100px;" alt="Ali Azmoodeh"/><br /><sub><b>Ali Azmoodeh</b></sub></a><br /><a href="#content-TREER00T" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/Saimon398"><img src="https://avatars.githubusercontent.com/u/71539667?v=4?s=100" width="100px;" alt="Alex Popov"/><br /><sub><b>Alex Popov</b></sub></a><br /><a href="#content-Saimon398" title="執筆">🖋</a></td>
+      <td align="center"><a href="http://shramko.dev"><img src="https://avatars.githubusercontent.com/u/42001531?v=4?s=100" width="100px;" alt="Serhii Shramko"/><br /><sub><b>Serhii Shramko</b></sub></a><br /><a href="#content-Shramkoweb" title="執筆">🖋</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="https://github.com/yugoccp"><img src="https://avatars.githubusercontent.com/u/1724114?v=4?s=100" width="100px;" alt="Yugo Sakamoto"/><br /><sub><b>Yugo Sakamoto</b></sub></a><br /><a href="#content-yugoccp" title="Content">🖋</a></td>
-      <td align="center"><a href="https://yeovilhospital.co.uk/"><img src="https://avatars.githubusercontent.com/u/43814140?v=4?s=100" width="100px;" alt="Frazer Smith"/><br /><sub><b>Frazer Smith</b></sub></a><br /><a href="#content-Fdawgs" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/wralith"><img src="https://avatars.githubusercontent.com/u/75392169?v=4?s=100" width="100px;" alt="Wralith"/><br /><sub><b>Wralith</b></sub></a><br /><a href="#content-wralith" title="Content">🖋</a></td>
-      <td align="center"><a href="https://haranglog.tistory.com"><img src="https://avatars.githubusercontent.com/u/60910665?v=4?s=100" width="100px;" alt="Harang"/><br /><sub><b>Harang</b></sub></a><br /><a href="#content-saseungmin" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/rcanelav"><img src="https://avatars.githubusercontent.com/u/64812826?v=4?s=100" width="100px;" alt="rcanelav"/><br /><sub><b>rcanelav</b></sub></a><br /><a href="#content-rcanelav" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/drewrwilson"><img src="https://avatars.githubusercontent.com/u/4324656?v=4?s=100" width="100px;" alt="Drew Wilson"/><br /><sub><b>Drew Wilson</b></sub></a><br /><a href="#content-drewrwilson" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/XtLee"><img src="https://avatars.githubusercontent.com/u/30145777?v=4?s=100" width="100px;" alt="XtLee"/><br /><sub><b>XtLee</b></sub></a><br /><a href="#content-XtLee" title="Content">🖋</a></td>
+      <td align="center"><a href="https://github.com/yugoccp"><img src="https://avatars.githubusercontent.com/u/1724114?v=4?s=100" width="100px;" alt="Yugo Sakamoto"/><br /><sub><b>Yugo Sakamoto</b></sub></a><br /><a href="#content-yugoccp" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://yeovilhospital.co.uk/"><img src="https://avatars.githubusercontent.com/u/43814140?v=4?s=100" width="100px;" alt="Frazer Smith"/><br /><sub><b>Frazer Smith</b></sub></a><br /><a href="#content-Fdawgs" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/wralith"><img src="https://avatars.githubusercontent.com/u/75392169?v=4?s=100" width="100px;" alt="Wralith"/><br /><sub><b>Wralith</b></sub></a><br /><a href="#content-wralith" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://haranglog.tistory.com"><img src="https://avatars.githubusercontent.com/u/60910665?v=4?s=100" width="100px;" alt="Harang"/><br /><sub><b>Harang</b></sub></a><br /><a href="#content-saseungmin" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/rcanelav"><img src="https://avatars.githubusercontent.com/u/64812826?v=4?s=100" width="100px;" alt="rcanelav"/><br /><sub><b>rcanelav</b></sub></a><br /><a href="#content-rcanelav" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/drewrwilson"><img src="https://avatars.githubusercontent.com/u/4324656?v=4?s=100" width="100px;" alt="Drew Wilson"/><br /><sub><b>Drew Wilson</b></sub></a><br /><a href="#content-drewrwilson" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/XtLee"><img src="https://avatars.githubusercontent.com/u/30145777?v=4?s=100" width="100px;" alt="XtLee"/><br /><sub><b>XtLee</b></sub></a><br /><a href="#content-XtLee" title="執筆">🖋</a></td>
     </tr>
     <tr>
-      <td align="center"><a href="https://www.smonn.se"><img src="https://avatars.githubusercontent.com/u/44818?v=4?s=100" width="100px;" alt="Simon Ingeson"/><br /><sub><b>Simon Ingeson</b></sub></a><br /><a href="#content-smonn" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/elfacu0"><img src="https://avatars.githubusercontent.com/u/30785449?v=4?s=100" width="100px;" alt="elfacu0"/><br /><sub><b>elfacu0</b></sub></a><br /><a href="#content-elfacu0" title="Content">🖋</a></td>
-      <td align="center"><a href="https://github.com/jorbelca"><img src="https://avatars.githubusercontent.com/u/76847923?v=4?s=100" width="100px;" alt="jorbelca"/><br /><sub><b>jorbelca</b></sub></a><br /><a href="#content-jorbelca" title="Content">🖋</a></td>
+      <td align="center"><a href="https://www.smonn.se"><img src="https://avatars.githubusercontent.com/u/44818?v=4?s=100" width="100px;" alt="Simon Ingeson"/><br /><sub><b>Simon Ingeson</b></sub></a><br /><a href="#content-smonn" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/elfacu0"><img src="https://avatars.githubusercontent.com/u/30785449?v=4?s=100" width="100px;" alt="elfacu0"/><br /><sub><b>elfacu0</b></sub></a><br /><a href="#content-elfacu0" title="執筆">🖋</a></td>
+      <td align="center"><a href="https://github.com/jorbelca"><img src="https://avatars.githubusercontent.com/u/76847923?v=4?s=100" width="100px;" alt="jorbelca"/><br /><sub><b>jorbelca</b></sub></a><br /><a href="#content-jorbelca" title="執筆">🖋</a></td>
     </tr>
   </tbody>
 </table>
