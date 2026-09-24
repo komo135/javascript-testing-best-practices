@@ -4,17 +4,6 @@
 
 Yoni Goldbergらによるガイドの日本語訳です。翻訳元は[コミット `63a2bb0` のREADME](https://github.com/goldbergyoni/javascript-testing-best-practices/blob/63a2bb07bb718d0a34a9c1249ef0df9b1266dad8/readme.md)です。
 
-## 読む前に：そのまま使えない記述
-
-原文の説明やコードを、最新のツールに合わせて書き直したものではありません。特に、次の記述には注意してください。
-
-- **[冒頭の講座案内](#course-announcement)：**「特別価格は残り48時間」は、原文掲載当時の告知です。現在のキャンペーン期限ではありません。
-- **[2.6節のV8メモリ上限](#practice-2-6)：** 原文は「上限1.7GB」としていますが、固定値ではありません。環境や起動オプションで変わります。実際の上限は`v8.getHeapStatistics().heap_size_limit`で確認できます（[Node.js公式資料](https://nodejs.org/api/v8.html#v8getheapstatistics)）。
-- **[5.7節の`npm update`](#practice-5-7)：** 原文の「`npm update`でも更新されない」という説明は、そのままでは正確ではありません。`npm update`は、指定されたバージョン範囲内で依存パッケージを更新します。メジャーバージョンを自動で越えないこととは別の話です（[npm公式資料](https://docs.npmjs.com/cli/v10/commands/npm-update)）。
-- **[5.9節のNode.jsバージョン](#practice-5-9)：** 本文の8・9・10、コード例の4〜7は、すべてサポート終了済みです。実際のCIでは、自分のプロジェクトが対応する、サポート期間内のバージョンを指定してください（[Node.js公式リリース一覧](https://nodejs.org/en/about/previous-releases)）。
-
-コード例（コメント・テスト名を含む）と画像内の英文は原文のままです。著者・協力者の表記と[MITライセンス](LICENSE)も保持しています。
-
 ---
 
 <img src="/assets/jtbp-header-blue.png" width="1920px" alt="JavaScript テストのベストプラクティス"/>
@@ -56,7 +45,7 @@ JavaScript と Node.js の信頼性を高めるための、基礎から応用ま
 - 🇪🇸[スペイン語](readme-es.md) — 翻訳：[Miguel G. Sanguino](https://github.com/sanguino)
 - 🇧🇷[ポルトガル語（ブラジル）](readme-pt-br.md) — 翻訳：[Iago Angelim Costa Cavalcante](https://github.com/iagocavalcante)、[Douglas Mariano Valero](https://github.com/DouglasMV)、[koooge](https://github.com/koooge)
 - 🇫🇷[フランス語](readme-fr.md) — 翻訳：[Mathilde El Mouktafi](https://github.com/mel-mouk)
-- 🇯🇵[上流で紹介されている日本語ドラフト（この翻訳とは別のもの）](https://github.com/yuichkun/javascript-testing-best-practices/blob/master/readme-jp.md) — 翻訳：[Yuichi Yogo](https://github.com/yuichkun)、[ryo](https://github.com/kawamataryo)
+- 🇯🇵[日本語（ドラフト）](https://github.com/yuichkun/javascript-testing-best-practices/blob/master/readme-jp.md) — 翻訳：[Yuichi Yogo](https://github.com/yuichkun)、[ryo](https://github.com/kawamataryo)
 - 🇹🇼[中国語（繁体字）](readme-zh-TW.md) — 翻訳：[Yubin Hsu](https://github.com/yubinTW)
 - 🇺🇦[ウクライナ語](readme-ua.md) — 翻訳：[Serhii Shramko](https://github.com/Shramkoweb)
 - 🇮🇷[ペルシャ語](readme-pr-fr.md) — 翻訳：[Ali Azmoodeh](https://github.com/TREER00T)
@@ -74,11 +63,11 @@ JavaScript と Node.js の信頼性を高めるための、基礎から応用ま
 
 #### [第1章：テストの構造](#section-1)
 
-読みやすいテストを組み立てるための基礎（13項目）
+読みやすいテストを組み立てるための基礎（12項目）
 
 #### [第2章：バックエンド](#section-2)
 
-バックエンドとマイクロサービスのテストを効率よく書く（12項目）
+バックエンドとマイクロサービスのテストを効率よく書く（13項目）
 
 #### [第3章：フロントエンド](#section-3)
 
@@ -1095,7 +1084,7 @@ beforeEach(() => {
 
 ## ⚪️ 2.11 外部連携の境界的なケースや障害を確認する
 
-:white_check_mark: **推奨：** 連携を確認するときは、通常の成功パターンと失敗パターンの先まで試しましょう。HTTP 500のようなエラー応答だけでなく、応答の遅延やタイムアウトなど、ネットワーク層の異常も確認します。これにより、タイムアウト後に適切な処理へ進むこと、壊れやすい競合状態がないこと、再試行に対するサーキットブレーカーを備えていることなど、さまざまな通信状況への耐性を確認できます。実績のあるインターセプターなら、ときどき失敗する不安定なサービスなど、多様な通信の振る舞いを簡単に再現できます。HTTPクライアントの既定のタイムアウト値と再現する応答時間を考慮し、実時間を待たずに即座にタイムアウト例外を発生させることもできます。
+:white_check_mark: **推奨：** 連携を確認するときは、通常の成功パターンと失敗パターンの先まで試しましょう。HTTP 500のようなエラー応答だけでなく、応答の遅延やタイムアウトなど、ネットワーク層の異常も確認します。これにより、タイムアウト後に適切な処理へ進むこと、壊れやすい競合状態がないこと、再試行に対するサーキットブレーカーを備えていることなど、さまざまな通信状況への耐性を確認できます。実績のあるインターセプターなら、ときどき失敗する不安定なサービスなど、多様な通信の振る舞いを簡単に再現できます。HTTPクライアントの既定のタイムアウト値が、シミュレートする応答時間より長いことを検知し、実際に待たずにその場でタイムアウト例外を投げることさえできます。
 
 
 <br/>
@@ -1108,7 +1097,7 @@ beforeEach(() => {
 
 <br/>
 
-### :clap: 良い例：通信障害時に、サーキットブレーカーなどの障害対策が機能することを確認する
+### :clap: 良い例：通信障害時に、サーキットブレーカーが役立つことを確認する
 
 ```javascript
   test('When users service replies with 503 once and retry mechanism is applied, then an order is added successfully', async () => {
@@ -1916,7 +1905,7 @@ it("Test name", () => {// *error:no-identical-title. Assign unique titles to tes
 
 ## ⚪️ 5.3 本番を忠実に再現した環境でE2Eテストを行う
 
-:white_check_mark: **推奨：** E2Eテストは、どのCIパイプラインでも大きな課題です。関連するクラウドサービスを含め、本番と同じ一時環境をその場で作るのは、手間も費用もかかります。適切な妥協点を探しましょう。[Docker Compose](https://serverless.com/)なら、1つのテキストファイルで、同じコンテナーを使った隔離環境を作れます。ただし、ネットワークやデプロイ方式などの基盤は、実際の本番環境と異なります。[LocalStack（原文では「AWS Local」）](https://github.com/localstack/localstack)を組み合わせれば、AWSサービスのスタブも利用できます。[サーバーレス](https://serverless.com/)を採用しているなら、Serverless Frameworkや[AWS SAM](https://docs.aws.amazon.com/lambda/latest/dg/serverless_app.html)などで、FaaSのコードをローカルから呼び出せます。
+:white_check_mark: **推奨：** E2Eテストは、どのCIパイプラインでも大きな課題です。関連するクラウドサービスを含め、本番と同じ一時環境をその場で作るのは、手間も費用もかかります。適切な妥協点を探しましょう。[Docker Compose](https://serverless.com/)なら、1つのテキストファイルで、同じコンテナーを使った隔離環境を作れます。ただし、ネットワークやデプロイ方式などの基盤は、実際の本番環境と異なります。[AWS Local](https://github.com/localstack/localstack)を組み合わせれば、AWSサービスのスタブも利用できます。[サーバーレス](https://serverless.com/)を採用しているなら、Serverless Frameworkや[AWS SAM](https://docs.aws.amazon.com/lambda/latest/dg/serverless_app.html)などで、FaaSのコードをローカルから呼び出せます。
 
 Kubernetesのエコシステムは巨大で、新しいツールも頻繁に登場しますが、ローカル環境やCIで本番を再現するための、便利で標準的なツールはまだ定まっていません。1つの方法は、[Minikube](https://kubernetes.io/docs/setup/minikube/)や[MicroK8s](https://microk8s.io/)で小規模なKubernetesを動かすことです。本番に似た環境を、より少ない負担で用意できます。もう1つは、リモートの実際のKubernetes上でテストする方法です。[Codefresh](https://codefresh.io/)のようにKubernetesとの連携機能を備え、本物の環境でCIを実行しやすいサービスもあれば、独自スクリプトでリモートのKubernetesを操作できるサービスもあります。
 <br/>
@@ -2011,7 +2000,7 @@ license-checker --summary --failOn BSD
 
 ## ⚪️ 5.7 依存パッケージの更新を自動化する
 
-:white_check_mark: **推奨：** Yarnやnpmでロックファイルが導入された結果、重大な課題が生まれました。善意の変更でも、思わぬ問題につながることがあります。原文では、既定ではパッケージが更新されなくなり、`npm install`や`npm update`を使って頻繁にデプロイしても新しい更新を取り込めない、と説明しています。その結果、よくても古い依存パッケージを使い続け、悪ければ脆弱なコードを使うことになります。package.jsonを手動で更新するか、[ncu](https://www.npmjs.com/package/npm-check-updates)などを手動実行するかは、開発者の注意と記憶に頼ってしまいます。より確実なのは、信頼できるバージョンの取得を自動化する方法です。万能な解決策はまだありませんが、自動化には次の2つの方向があります。
+:white_check_mark: **推奨：** Yarnやnpmに新たにpackage-lock.jsonが導入され、重大な課題が生まれました。「地獄への道は善意で舗装されている」とは、このことです。今や既定ではパッケージが更新されません。`npm install`や`npm update`を使って何度も新しくデプロイしているチームでも、更新を取り込めないのです。その結果、よくても古い依存パッケージを使い続け、悪ければ脆弱なコードを使うことになります。package.jsonを手動で更新するか、[ncu](https://www.npmjs.com/package/npm-check-updates)などを手動実行するかは、開発者の注意と記憶に頼ってしまいます。より確実なのは、信頼できるバージョンの取得を自動化する方法です。万能な解決策はまだありませんが、自動化には次の2つの方向があります。
 
 (1) 古い依存パッケージを含むビルドをCIで失敗させます。[`npm outdated`](https://docs.npmjs.com/cli/outdated)や`npm-check-updates（ncu）`を使えば、開発者に更新を促せます。
 
